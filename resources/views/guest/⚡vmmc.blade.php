@@ -191,7 +191,12 @@ new class extends Component
             ],
         ]);
 
-        dd('Form submitted successfully!', $vmmc);
+       $this->dispatch(
+            'open-pdf',
+            data: [
+                'personal' => $this->personal,
+            ],
+        );
     }
 
     public function yesNo(?string $val): string

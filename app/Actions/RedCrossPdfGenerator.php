@@ -13,8 +13,7 @@ class RedCrossPdfGenerator
         $filename = "RedCross-BloodDonor-{$surname}-{$givenName}.pdf";
 
         return Pdf::view('pdf.redcross-pdf', ['data' => $data['personal']])
-            ->format('a4')
-            ->margins(4, 10, 4, 10)
+            ->margins(1, 10, 1, 10)
             ->inline($filename);
     }
 }

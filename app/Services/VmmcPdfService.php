@@ -17,7 +17,6 @@ class VmmcPdfService
 
         return Pdf::view('pdf.vmmc-pdf', compact('data'))
             ->margins(4, 10, 4, 10)
-            ->format('a4')
             ->inline($filename);
     }
 }
