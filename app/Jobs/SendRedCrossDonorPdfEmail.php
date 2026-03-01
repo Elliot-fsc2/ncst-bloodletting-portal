@@ -35,7 +35,7 @@ class SendRedCrossDonorPdfEmail implements ShouldQueue
       ->format('a4')
       ->save($pdfAbsolutePath);
 
-    $downloadUrl = URL::temporarySignedRoute('pdf.download', now()->addDays(7), ['path' => $pdfSubpath]);
+    $downloadUrl = URL::temporarySignedRoute('pdf.landing', now()->addDays(7), ['path' => $pdfSubpath]);
 
     Mail::to($this->donorEmail)->send(new FormSubmitted($this->donorName, $downloadUrl));
   }
