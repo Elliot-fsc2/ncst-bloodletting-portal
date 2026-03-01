@@ -54,7 +54,7 @@ new class extends Component {
                 'personal.contact_no' => 'required|string',
                 'personal.middle_name' => 'nullable|string',
                 'personal.civil_status' => 'nullable|string',
-                'personal.email' => 'nullable|email',
+                'personal.email' => 'required|email',
                 'personal.nationality' => 'nullable|string',
                 'personal.occupation' => 'nullable|string',
                 'personal.street_address' => 'nullable|string',
@@ -78,6 +78,8 @@ new class extends Component {
                 'personal.birthdate.date' => 'Please enter a valid date.',
                 'personal.gender.required' => 'Gender is required.',
                 'personal.contact_no.required' => 'Contact number is required.',
+                'personal.email.required' => 'Email address is required.',
+                'personal.email.email' => 'Please enter a valid email address.',
             ],
             default => [],
         };

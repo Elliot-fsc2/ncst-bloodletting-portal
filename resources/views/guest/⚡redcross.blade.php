@@ -65,7 +65,7 @@ new class extends Component {
                 'personal.mobile_no' => 'required|string',
                 'personal.address_town' => 'required|string',
                 'personal.address_province' => 'required|string',
-                'personal.email' => 'nullable|email',
+                'personal.email' => 'required|email',
                 'personal.middle_name' => 'nullable|string',
                 'personal.civil_status' => 'nullable|string',
                 'personal.nationality' => 'nullable|string',
@@ -86,6 +86,8 @@ new class extends Component {
                 'personal.mobile_no.required' => 'Mobile number is required.',
                 'personal.address_town.required' => 'Town/Municipality is required.',
                 'personal.address_province.required' => 'Province is required.',
+                'personal.email.required' => 'Email address is required.',
+                'personal.email.email' => 'Please enter a valid email address.',
             ],
             default => [],
         };

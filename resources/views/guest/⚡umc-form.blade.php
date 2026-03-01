@@ -56,7 +56,7 @@ new class extends Component {
                 'personal.business_address' => 'nullable|string',
                 'personal.nationality' => 'nullable|string',
                 'personal.telephone' => 'nullable|string',
-                'personal.email' => 'nullable|email',
+                'personal.email' => 'required|email',
             ],
             default => [],
         };
