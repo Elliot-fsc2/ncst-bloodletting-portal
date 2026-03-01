@@ -1,9 +1,9 @@
 ﻿<?php
 
-use App\Jobs\SendRedCrossDonorPdfEmail;
+use App\Jobs\SendUmcDonorPdfEmail;
 use App\Models\Hospital;
-use Livewire\Component;
 use Carbon\Carbon;
+use Livewire\Component;
 
 new class extends Component {
     public int $step = 1;
@@ -13,33 +13,19 @@ new class extends Component {
     public bool $consent = false;
 
     public array $personal = [
-        // Name Row
         'surname' => '',
         'first_name' => '',
         'middle_name' => '',
-
-        // Demographics Row
         'birthdate' => '',
         'age' => '',
+        'gender' => '',
         'civil_status' => '',
-        'sex' => '',
-
-        // Permanent Address Row
-        'address_street' => '',
-        'address_barangay' => '',
-        'address_town' => '',
-        'address_province' => '',
-        'address_zip' => '',
-
-        // Additional Info
-        'nationality' => '',
-        'religion' => '',
-        'education' => '',
+        'address' => '',
         'occupation' => '',
-
-        // Contact Info
-        'mobile_no' => '',
-        'telephone_no' => '',
+        'business_address' => '',
+        'cellphone' => '',
+        'nationality' => '',
+        'telephone' => '',
         'email' => '',
     ];
 
@@ -61,15 +47,16 @@ new class extends Component {
                 'personal.surname' => 'required|string',
                 'personal.first_name' => 'required|string',
                 'personal.birthdate' => 'required|date',
-                'personal.sex' => 'required|in:Male,Female',
-                'personal.mobile_no' => 'required|string',
-                'personal.address_town' => 'required|string',
-                'personal.address_province' => 'required|string',
-                'personal.email' => 'nullable|email',
+                'personal.gender' => 'required|in:Male,Female',
+                'personal.cellphone' => 'required|string',
                 'personal.middle_name' => 'nullable|string',
                 'personal.civil_status' => 'nullable|string',
+                'personal.address' => 'nullable|string',
+                'personal.occupation' => 'nullable|string',
+                'personal.business_address' => 'nullable|string',
                 'personal.nationality' => 'nullable|string',
-                'personal.religion' => 'nullable|string',
+                'personal.telephone' => 'nullable|string',
+                'personal.email' => 'nullable|email',
             ],
             default => [],
         };
@@ -81,11 +68,10 @@ new class extends Component {
             1 => [
                 'personal.surname.required' => 'Surname is required.',
                 'personal.first_name.required' => 'First name is required.',
-                'personal.birthdate.required' => 'Birthdate is required.',
-                'personal.sex.required' => 'Sex is required.',
-                'personal.mobile_no.required' => 'Mobile number is required.',
-                'personal.address_town.required' => 'Town/Municipality is required.',
-                'personal.address_province.required' => 'Province is required.',
+                'personal.birthdate.required' => 'Date of birth is required.',
+                'personal.birthdate.date' => 'Please enter a valid date.',
+                'personal.gender.required' => 'Gender is required.',
+                'personal.cellphone.required' => 'Cellphone number is required.',
             ],
             default => [],
         };
@@ -108,9 +94,9 @@ new class extends Component {
     {
         $this->validate(['consent' => 'accepted'], ['consent.accepted' => 'You must accept the consent statement to submit.']);
 
-        $redCross = Hospital::where('name', 'Red Cross')->firstOrFail();
+        $hospital = Hospital::where('name', 'LIKE', '%De La Salle%')->firstOrFail();
 
-        $redCross->forms()->create([
+        $hospital->forms()->create([
             'donor_name' => trim($this->personal['surname'] . ', ' . $this->personal['first_name'] . ' ' . $this->personal['middle_name']),
             'donor_email' => $this->personal['email'] ?? '',
             'form_data' => ['personal' => $this->personal],
@@ -118,12 +104,12 @@ new class extends Component {
 
         $surname = strtoupper($this->personal['surname'] ?? 'donor');
         $firstName = strtoupper($this->personal['first_name'] ?? '');
-        $filename = str_replace(' ', '_', "RedCross-BloodDonor-{$surname}-{$firstName}.pdf");
+        $filename = str_replace(' ', '_', "UMC-BloodDonor-{$surname}-{$firstName}.pdf");
         $donorName = trim($firstName . ' ' . $surname);
-        $email = $this->personal['email'] ?? '';
-        $pdfData = ['personal' => $this->personal];
 
-        SendRedCrossDonorPdfEmail::dispatch($donorName, $email, $filename, $pdfData);
+        SendUmcDonorPdfEmail::dispatch($donorName, $this->personal['email'] ?? '', $filename, [
+            'personal' => $this->personal,
+        ]);
 
         $this->submitted = true;
         $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
@@ -152,12 +138,12 @@ new class extends Component {
     @else
         {{-- Step Tracker --}}
         <div class="mb-6">
-            <div class="flex items-center justify-between relative max-w-md mx-auto">
+            <div class="flex items-center justify-between relative max-w-lg mx-auto">
                 <div class="absolute top-5 left-0 right-0 h-0.5 bg-red-100 z-0 mx-6"></div>
                 <div class="absolute top-5 left-0 h-0.5 bg-red-500 z-0 mx-6 transition-all duration-500"
                     style="width: calc({{ ($step - 1) / 1 }} * (100% - 3rem))"></div>
 
-                @foreach ([['label' => 'Donor Data'], ['label' => 'Review']] as $i => $s)
+                @foreach ([['label' => 'Personal'], ['label' => 'Confirm']] as $i => $s)
                     @php $n = $i + 1; @endphp
                     <div class="flex flex-col items-center z-10 gap-1.5 bg-gray-50 px-2">
                         <div @class([
@@ -187,6 +173,8 @@ new class extends Component {
         </div>
 
         <flux:card class="shadow-sm">
+
+            {{-- ── STEP 1: Personal Information ── --}}
             @if ($step === 1)
                 <div wire:transition>
                     <div class="flex items-center gap-3 mb-6 pb-4 border-b border-red-100">
@@ -198,75 +186,75 @@ new class extends Component {
                             </svg>
                         </div>
                         <div>
-                            <flux:heading class="text-base! font-semibold!">Personal Data (Donor)</flux:heading>
-                            <p class="text-xs text-gray-500 mt-0.5">Please fill in all information accurately.</p>
+                            <flux:heading class="text-base! font-semibold!">Personal Information</flux:heading>
+                            <p class="text-xs text-gray-500 mt-0.5">Fields marked <span class="text-red-500">*</span>
+                                are
+                                required.</p>
                         </div>
                     </div>
 
-                    <div class="space-y-6">
-                        {{-- Section 1: Name --}}
+                    <div class="space-y-5">
+                        {{-- Name --}}
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <flux:input wire:model="personal.surname" label="Surname *" placeholder="Surname" />
-                            <flux:input wire:model="personal.first_name" label="First Name *"
-                                placeholder="First Name" />
+                            <flux:input wire:model="personal.surname" label="Apelyido / Surname *"
+                                placeholder="e.g. Dela Cruz" />
+                            <flux:input wire:model="personal.first_name" label="Pangalan / First Name *"
+                                placeholder="e.g. Juan" />
                             <flux:input wire:model="personal.middle_name" label="Middle Name"
-                                placeholder="Middle Name" />
+                                placeholder="e.g. Santos" />
                         </div>
 
-                        {{-- Section 2: Demographics --}}
+                        {{-- Birthdate / Age / Gender / Civil Status --}}
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <flux:input wire:model.live="personal.birthdate" type="date" label="Birthdate *" />
-                            <flux:input wire:model="personal.age" label="Age" readonly class="bg-gray-50!" />
+                            <flux:input wire:model.live="personal.birthdate" type="date"
+                                label="Petsa ng Kaarawan / Birthdate *" />
+                            <flux:input wire:model="personal.age" label="Edad / Age" placeholder="Auto" readonly
+                                class="bg-gray-50!" />
+                            <flux:select wire:model="personal.gender" label="Kasarian / Gender *">
+                                <flux:select.option value="">Select...</flux:select.option>
+                                <flux:select.option value="Male">Lalaki / Male</flux:select.option>
+                                <flux:select.option value="Female">Babae / Female</flux:select.option>
+                            </flux:select>
                             <flux:select wire:model="personal.civil_status" label="Civil Status">
                                 <flux:select.option value="">Select...</flux:select.option>
                                 <flux:select.option value="Single">Single</flux:select.option>
                                 <flux:select.option value="Married">Married</flux:select.option>
-                                <flux:select.option value="Separated">Separated</flux:select.option>
-                                <flux:select.option value="Widowed">Widowed</flux:select.option>
-                            </flux:select>
-                            <flux:select wire:model="personal.sex" label="Sex *">
-                                <flux:select.option value="">Select...</flux:select.option>
-                                <flux:select.option value="Male">Male</flux:select.option>
-                                <flux:select.option value="Female">Female</flux:select.option>
+                                <flux:select.option value="Widow">Widow</flux:select.option>
                             </flux:select>
                         </div>
 
-                        {{-- Section 3: Permanent Address --}}
-                        <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Permanent Address
-                            </p>
-                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
-                                <flux:input wire:model="personal.address_street" label="No. / Street"
-                                    class="sm:col-span-1" />
-                                <flux:input wire:model="personal.address_barangay" label="Barangay"
-                                    class="sm:col-span-1" />
-                                <flux:input wire:model="personal.address_town" label="Town/Municipality *"
-                                    class="sm:col-span-1" />
-                                <flux:input wire:model="personal.address_province" label="Province/City *"
-                                    class="sm:col-span-1" />
-                                <flux:input wire:model="personal.address_zip" label="Zip Code" class="sm:col-span-1" />
-                            </div>
-                        </div>
-
-                        {{-- Section 4: Other Info --}}
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-gray-100 pt-5">
-                            <flux:input wire:model="personal.nationality" label="Nationality" />
-                            <flux:input wire:model="personal.religion" label="Religion" />
-                            <flux:input wire:model="personal.education" label="Education" />
-                            <flux:input wire:model="personal.occupation" label="Occupation" />
-                        </div>
-
-                        {{-- Section 5: Contact --}}
+                        {{-- Contact / Nationality --}}
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <flux:input wire:model="personal.mobile_no" label="Mobile No. *"
-                                placeholder="09XXXXXXXXX" />
-                            <flux:input wire:model="personal.telephone_no" label="Telephone No." />
-                            <flux:input wire:model="personal.email" type="email" label="E-mail Address" />
+                            <flux:input wire:model="personal.cellphone" label="Cellphone No. *"
+                                placeholder="09XX XXX XXXX" />
+                            <flux:input wire:model="personal.telephone" label="Telepono / Tel. No."
+                                placeholder="(046) XXX-XXXX" />
+                            <flux:input wire:model="personal.nationality" label="Lahi / Nationality"
+                                placeholder="e.g. Filipino" />
                         </div>
+
+                        {{-- Email --}}
+                        <flux:input wire:model="personal.email" type="email" label="Email Address"
+                            placeholder="e.g. juan@email.com" />
+
+                        {{-- Address --}}
+                        <flux:input wire:model="personal.address" label="Tirahan / Address"
+                            placeholder="House No., Street, Barangay, City/Municipality" />
+
+                        {{-- Occupation / Business Address --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <flux:input wire:model="personal.occupation" label="Trabaho / Occupation"
+                                placeholder="e.g. Student, Nurse" />
+                            <flux:input wire:model="personal.business_address"
+                                label="Lugar ng Trabaho / Business Address" placeholder="Company/school address" />
+                        </div>
+
+
                     </div>
                 </div>
             @endif
 
+            {{-- ── STEP 2: Review & Confirm ── --}}
             @if ($step === 2)
                 <div wire:transition>
                     <div class="flex items-center gap-3 mb-6 pb-4 border-b border-red-100">
@@ -278,32 +266,47 @@ new class extends Component {
                             </svg>
                         </div>
                         <div>
-                            <flux:heading class="text-base! font-semibold!">Review Donor Information</flux:heading>
-                            <p class="text-xs text-gray-500 mt-0.5">Please confirm all details are correct before
-                                submission.</p>
+                            <flux:heading class="text-base! font-semibold! text-gray-800!">Review & Confirm
+                            </flux:heading>
+                            <p class="text-xs text-gray-500 mt-0.5">Please review all your answers carefully before
+                                submitting.</p>
                         </div>
                     </div>
 
-                    <div class="rounded-xl border border-gray-200 overflow-hidden">
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-px bg-gray-100">
-                            @foreach ([
-        'Full Name' => $personal['first_name'] . ' ' . $personal['middle_name'] . ' ' . $personal['surname'],
+                    <div class="space-y-5 text-sm">
+                        {{-- Personal Data --}}
+                        <div class="rounded-xl border border-gray-200 overflow-hidden">
+                            <div class="flex items-center gap-2 bg-red-50 px-4 py-2.5 border-b border-red-100">
+                                <span>👤</span>
+                                <p class="text-xs font-bold text-red-700 uppercase tracking-wider">Personal Information
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-px bg-gray-100">
+                                @foreach ([
+        'Surname' => $personal['surname'],
+        'First Name' => $personal['first_name'],
+        'Middle Name' => $personal['middle_name'] ?: '—',
         'Birthdate' => $personal['birthdate'],
-        'Age / Sex' => ($personal['age'] ?? '—') . ' / ' . ($personal['sex'] ?? '—'),
+        'Age' => $personal['age'] ?: '—',
+        'Gender' => $personal['gender'],
         'Civil Status' => $personal['civil_status'] ?: '—',
-        'Address' => "{$personal['address_street']}, {$personal['address_barangay']}, {$personal['address_town']}, {$personal['address_province']} {$personal['address_zip']}",
+        'Cellphone' => $personal['cellphone'],
+        'Telephone' => $personal['telephone'] ?: '—',
         'Nationality' => $personal['nationality'] ?: '—',
-        'Religion' => $personal['religion'] ?: '—',
-        'Mobile' => $personal['mobile_no'],
+        'Address' => $personal['address'] ?: '—',
+        'Occupation' => $personal['occupation'] ?: '—',
+        'Business Address' => $personal['business_address'] ?: '—',
         'Email' => $personal['email'] ?: '—',
     ] as $label => $val)
-                                <div class="bg-white px-3 py-2">
-                                    <p class="text-[0.65rem] text-gray-400 uppercase tracking-wide mb-0.5">
-                                        {{ $label }}</p>
-                                    <p class="font-medium text-gray-800 text-sm">{{ $val }}</p>
-                                </div>
-                            @endforeach
+                                    <div class="bg-white px-3 py-2">
+                                        <p class="text-[0.65rem] text-gray-400 uppercase tracking-wide mb-0.5">
+                                            {{ $label }}</p>
+                                        <p class="font-medium text-gray-800">{{ $val }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
+
                     </div>
 
                     {{-- Consent --}}
@@ -315,14 +318,15 @@ new class extends Component {
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             <p class="text-xs text-gray-600 italic leading-relaxed">
-                                "I voluntarily give my consent for the collection, use, and processing of my personal
-                                data to <strong class="not-italic font-semibold text-red-700">Philippine Red
-                                    Cross</strong>.
-                                I declare that I have truthfully answered all of the above questions."
+                                "Ako ay kusang loob na nagbibigay ng dugo sa
+                                <strong class="not-italic font-semibold text-red-700">DLS-UMC Blood Bank</strong>
+                                upang magamit ng higit na nangangailangan. Pinatutunayan ko na pawing katotohanan ang
+                                aking
+                                mga sagot sa mga nakalahad na katanungan."
                             </p>
                         </div>
                         <flux:checkbox wire:model.live="consent"
-                            label="I have read and understand the consent terms." />
+                            label="I have read and I agree to the consent statement." />
                         @error('consent')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
@@ -339,35 +343,17 @@ new class extends Component {
                 @endif
 
                 <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-400 hidden sm:block">Step {{ $step }} of 2</span>
                     @if ($step < 2)
                         <flux:button wire:click="nextStep" variant="primary" icon-trailing="chevron-right"
-                            class="bg-red-600! hover:bg-red-700!">Next</flux:button>
+                            class="bg-red-600! hover:bg-red-700! border-red-600!">Next</flux:button>
                     @else
                         <flux:button wire:click="submit" variant="primary" icon="check" :disabled="!$consent"
-                            class="bg-red-600! hover:bg-red-700!">Submit & Send PDF</flux:button>
+                            class="bg-red-600! hover:bg-red-700! border-red-600!">Submit & Generate PDF</flux:button>
                     @endif
                 </div>
             </div>
+
         </flux:card>
     @endif
 </div>
-
-@script
-    <script>
-        $wire.on('open-pdf', ({
-            data
-        }) => {
-            fetch('{{ route('redcross.pdf') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify(data),
-                })
-                .then(res => res.blob())
-                .then(blob => window.open(URL.createObjectURL(blob), '_blank'))
-                .catch(err => alert('Error generating PDF'));
-        });
-    </script>
-@endscript
