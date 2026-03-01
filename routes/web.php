@@ -10,7 +10,7 @@ Route::livewire('/', 'guest::donation-form')->name('home');
 Route::post('/vmmc-pdf', [PdfGeneratorController::class, 'vmmc'])->name('vmmc.pdf');
 Route::post('/tsmc-pdf', [PdfGeneratorController::class, 'tsmc'])->name('tsmc.pdf');
 Route::post('/redcross-pdf', [PdfGeneratorController::class, 'redcross'])->name('redcross.pdf');
-Route::view('/vmmc-pdf', 'pdf.vmmc-pdf');
+Route::view('/tsmc-pdf', 'pdf.tsmcs-pdf');
 
 Route::get('/download-pdf/{path}', function (string $path) {
 
