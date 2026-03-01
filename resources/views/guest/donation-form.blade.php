@@ -17,10 +17,10 @@ new #[Layout('layouts.guest')] class extends Component {
 
 <div>
     {{-- @if ($priorityHospitalTag === 'Veterans Memorial Medical Center') --}}
-    <livewire:guest::vmmc />
+    {{-- <livewire:guest::vmmc /> --}}
     {{-- @elseif ($priorityHospitalTag === 'Tanza Specialists Medical Center') --}}
     {{-- <livewire:guest::tsmcs /> --}}
     {{-- @elseif ($priorityHospitalTag === 'Red Cross') --}}
-    {{-- <livewire:guest::redcross /> --}}
+    <livewire:guest::redcross />
     {{-- @endif --}}
 </div>

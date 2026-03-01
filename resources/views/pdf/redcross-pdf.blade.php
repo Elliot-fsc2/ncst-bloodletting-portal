@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
-    @vite('resources/css/app.css')
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+
 </head>
 
 <body>

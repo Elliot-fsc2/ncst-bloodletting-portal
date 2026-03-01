@@ -1,10 +1,14 @@
 <?php
 
+use App\Jobs\SendRedCrossDonorPdfEmail;
+use App\Models\Hospital;
 use Livewire\Component;
 use Carbon\Carbon;
 
 new class extends Component {
     public int $step = 1;
+
+    public bool $consent = false;
 
     public array $personal = [
         // Name Row
@@ -96,14 +100,26 @@ new class extends Component {
         $this->step--;
     }
 
-    public function submit()
+    public function submit(): void
     {
-        $this->dispatch(
-            'open-pdf',
-            data: [
-                'personal' => $this->personal,
-            ],
-        );
+        $this->validate(['consent' => 'accepted'], ['consent.accepted' => 'You must accept the consent statement to submit.']);
+
+        $redCross = Hospital::where('name', 'Red Cross')->firstOrFail();
+
+        $redCross->forms()->create([
+            'donor_name' => trim($this->personal['surname'] . ', ' . $this->personal['first_name'] . ' ' . $this->personal['middle_name']),
+            'donor_email' => $this->personal['email'] ?? '',
+            'form_data' => ['personal' => $this->personal],
+        ]);
+
+        $surname = strtoupper($this->personal['surname'] ?? 'donor');
+        $firstName = strtoupper($this->personal['first_name'] ?? '');
+        $filename = str_replace(' ', '_', "RedCross-BloodDonor-{$surname}-{$firstName}.pdf");
+        $donorName = trim($firstName . ' ' . $surname);
+        $email = $this->personal['email'] ?? '';
+        $pdfData = ['personal' => $this->personal];
+
+        SendRedCrossDonorPdfEmail::dispatch($donorName, $email, $filename, $pdfData);
     }
 }; ?>
 
@@ -256,6 +272,27 @@ new class extends Component {
                         @endforeach
                     </div>
                 </div>
+
+                {{-- Consent --}}
+                <div class="mt-5 rounded-xl border border-red-200 bg-red-50/40 p-4">
+                    <div class="flex gap-3 mb-4">
+                        <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <p class="text-xs text-gray-600 italic leading-relaxed">
+                            "I voluntarily give my consent for the collection, use, and processing of my personal
+                            data to <strong class="not-italic font-semibold text-red-700">Philippine Red
+                                Cross</strong>.
+                            I declare that I have truthfully answered all of the above questions."
+                        </p>
+                    </div>
+                    <flux:checkbox wire:model.live="consent" label="I have read and understand the consent terms." />
+                    @error('consent')
+                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
         @endif
 
@@ -272,8 +309,8 @@ new class extends Component {
                     <flux:button wire:click="nextStep" variant="primary" icon-trailing="chevron-right"
                         class="bg-red-600! hover:bg-red-700!">Next</flux:button>
                 @else
-                    <flux:button wire:click="submit" variant="primary" icon="check"
-                        class="bg-red-600! hover:bg-red-700!">Submit & Generate PDF</flux:button>
+                    <flux:button wire:click="submit" variant="primary" icon="check" :disabled="!$consent"
+                        class="bg-red-600! hover:bg-red-700!">Submit & Send PDF</flux:button>
                 @endif
             </div>
         </div>
