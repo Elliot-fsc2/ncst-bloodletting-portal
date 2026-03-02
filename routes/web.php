@@ -7,12 +7,10 @@ use Illuminate\Support\Facades\URL;
 
 Route::livewire('/', 'guest::donation-form')->name('home');
 
-// PDF generation — data is POSTed as JSON from $this->js() fetch() in the Livewire component
-Route::post('/vmmc-pdf', [PdfGeneratorController::class, 'vmmc'])->name('vmmc.pdf');
-Route::post('/tsmc-pdf', [PdfGeneratorController::class, 'tsmc'])->name('tsmc.pdf');
-Route::post('/redcross-pdf', [PdfGeneratorController::class, 'redcross'])->name('redcross.pdf');
 Route::view('/vmmc-pdf', 'pdf.vmmc-pdf');
 Route::view('/umc-pdf', 'pdf.umc-pdf');
+Route::view('/redcross-pdf', 'pdf.redcross-pdf');
+Route::view('/tsmc-pdf', 'pdf.tsmc-pdf');
 Route::view('/eacmed-pdf', 'pdf.eacmed-pdf');
 
 Route::get('/download-pdf/{path}', function (string $path) {
