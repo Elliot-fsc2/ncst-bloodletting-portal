@@ -30,7 +30,11 @@ class SendRedCrossDonorPdfEmail implements ShouldQueue
 
     File::ensureDirectoryExists(Storage::disk('local')->path('private/pdfs/redcross'));
 
-    Pdf::view('pdf.redcross-pdf', ['data' => $this->pdfData['personal']])
+    Pdf::view('pdf.redcross-pdf', [
+      'data' => $this->pdfData['personal'],
+      'queue_number' => $this->pdfData['queue_number'] ?? '',
+      'preferred_date' => $this->pdfData['preferred_date'] ?? '',
+    ])
       ->margins(1, 10, 1, 10)
       ->format('a4')
       ->save($pdfAbsolutePath);

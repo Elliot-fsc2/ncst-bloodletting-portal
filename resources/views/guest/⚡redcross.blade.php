@@ -2,8 +2,9 @@
 
 use App\Jobs\SendRedCrossDonorPdfEmail;
 use App\Models\Hospital;
-use Livewire\Component;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
+use Livewire\Component;
 
 new class extends Component {
     public int $step = 1;
@@ -11,6 +12,16 @@ new class extends Component {
     public bool $submitted = false;
 
     public bool $consent = false;
+
+    public bool $is_representative = false;
+
+    public string $preferred_date = '';
+
+    public array $representative = [
+        'first_name' => '',
+        'surname' => '',
+        'student_employee_id' => '',
+    ];
 
     public array $personal = [
         // Name Row
@@ -70,6 +81,10 @@ new class extends Component {
                 'personal.civil_status' => 'nullable|string',
                 'personal.nationality' => 'nullable|string',
                 'personal.religion' => 'nullable|string',
+                'preferred_date' => 'required|in:2026-03-13,2026-03-20',
+                'representative.first_name' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
+                'representative.surname' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
+                'representative.student_employee_id' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
             ],
             default => [],
         };
@@ -88,6 +103,9 @@ new class extends Component {
                 'personal.address_province.required' => 'Province is required.',
                 'personal.email.required' => 'Email address is required.',
                 'personal.email.email' => 'Please enter a valid email address.',
+                'representative.first_name.required' => 'First name of the person being represented is required.',
+                'representative.surname.required' => 'Surname of the person being represented is required.',
+                'representative.student_employee_id.required' => 'Student/Employee ID of the person being represented is required.',
             ],
             default => [],
         };
@@ -96,6 +114,12 @@ new class extends Component {
     public function nextStep(): void
     {
         $this->validate($this->rulesForStep($this->step), $this->messagesForStep($this->step));
+
+        if ($this->step === 1 && \App\Models\Form::where('donor_email', $this->personal['email'] ?? '')->exists()) {
+            $this->addError('personal.email', 'This email has already been used to register.');
+            return;
+        }
+
         $this->step++;
         $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
     }
@@ -112,10 +136,19 @@ new class extends Component {
 
         $redCross = Hospital::where('name', 'Red Cross')->firstOrFail();
 
+        $existingCount = $redCross->forms()->where('form_data->preferred_date', $this->preferred_date)->count();
+
+        $queueNumber = 'RDC' . str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
+
         $redCross->forms()->create([
             'donor_name' => trim($this->personal['surname'] . ', ' . $this->personal['first_name'] . ' ' . $this->personal['middle_name']),
             'donor_email' => $this->personal['email'] ?? '',
-            'form_data' => ['personal' => $this->personal],
+            'form_data' => [
+                'personal' => $this->personal,
+                'representative' => $this->is_representative ? $this->representative : null,
+                'preferred_date' => $this->preferred_date,
+                'queue_number' => $queueNumber,
+            ],
         ]);
 
         $surname = strtoupper($this->personal['surname'] ?? 'donor');
@@ -123,7 +156,12 @@ new class extends Component {
         $filename = str_replace(' ', '_', "RedCross-BloodDonor-{$surname}-{$firstName}.pdf");
         $donorName = trim($firstName . ' ' . $surname);
         $email = $this->personal['email'] ?? '';
-        $pdfData = ['personal' => $this->personal];
+        $pdfData = [
+            'personal' => $this->personal,
+            'representative' => $this->is_representative ? $this->representative : null,
+            'preferred_date' => $this->preferred_date,
+            'queue_number' => $queueNumber,
+        ];
 
         SendRedCrossDonorPdfEmail::dispatch($donorName, $email, $filename, $pdfData);
 
@@ -205,6 +243,25 @@ new class extends Component {
                         </div>
                     </div>
 
+                    {{-- Representative Donor --}}
+                    <div class="mb-5 rounded-xl border border-amber-200 bg-amber-50/40 p-4">
+                        <flux:checkbox wire:model.live="is_representative" label="I am donating as a Representative" />
+                        @if ($is_representative)
+                            <div class="mt-4 space-y-3" wire:transition>
+                                <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">Representative
+                                    For:</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <flux:input wire:model="representative.first_name" label="First Name"
+                                        placeholder="e.g. Juan" />
+                                    <flux:input wire:model="representative.surname" label="Surname"
+                                        placeholder="e.g. Dela Cruz" />
+                                    <flux:input wire:model="representative.student_employee_id"
+                                        label="Student / Employee ID" placeholder="e.g. 2024-00123" />
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
                     <div class="space-y-6">
                         {{-- Section 1: Name --}}
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -246,7 +303,8 @@ new class extends Component {
                                     class="sm:col-span-1" />
                                 <flux:input wire:model="personal.address_province" label="Province/City *"
                                     class="sm:col-span-1" />
-                                <flux:input wire:model="personal.address_zip" label="Zip Code" class="sm:col-span-1" />
+                                <flux:input wire:model="personal.address_zip" label="Zip Code"
+                                    class="sm:col-span-1" />
                             </div>
                         </div>
 
@@ -265,6 +323,13 @@ new class extends Component {
                             <flux:input wire:model="personal.telephone_no" label="Telephone No." />
                             <flux:input wire:model="personal.email" type="email" label="E-mail Address" />
                         </div>
+
+                        {{-- Preferred Donation Date --}}
+                        <flux:select wire:model="preferred_date" label="Preferred Donation Date *">
+                            <flux:select.option value="">Select a date...</flux:select.option>
+                            <flux:select.option value="2026-03-13">March 13, 2026</flux:select.option>
+                            <flux:select.option value="2026-03-20">March 20, 2026</flux:select.option>
+                        </flux:select>
                     </div>
                 </div>
             @endif

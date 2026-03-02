@@ -12,6 +12,8 @@ class RedCrossPdfGenerator
         $givenName = strtoupper($data['personal']['given_name'] ?? '');
         $filename = "RedCross-BloodDonor-{$surname}-{$givenName}.pdf";
 
+        // $queue_generator = "RDC". "####"
+
         return Pdf::view('pdf.redcross-pdf', ['data' => $data['personal']])
             ->margins(1, 10, 1, 10)
             ->inline($filename);

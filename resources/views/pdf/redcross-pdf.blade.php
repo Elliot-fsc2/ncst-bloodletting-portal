@@ -12,6 +12,11 @@
 
     <div class="max-w-5xl mx-auto bg-white font-sans relative">
 
+        <div class="absolute left-0 top-0 text-xs leading-snug">
+            <p class="font-semibold">Queue No: {{ $queue_number ?? '' }} | NCST Blood Donation</p>
+            <p>NCST, {{ $preferred_date ? \Carbon\Carbon::parse($preferred_date)->format('F j, Y') : '' }}, 8:00 AM</p>
+        </div>
+
         <div class="flex flex-col items-center justify-center">
             <div class="flex items-center space-x-6">
                 <img src="{{ asset('images/red-cross.png') }}" alt="Philippine Red Cross"

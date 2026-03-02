@@ -30,9 +30,12 @@ class SendEacmedDonorPdfEmail implements ShouldQueue
 
     File::ensureDirectoryExists(Storage::disk('local')->path('private/pdfs/eacmed'));
 
-    Pdf::view('pdf.eacmed-pdf', ['data' => $this->pdfData])
+    Pdf::view('pdf.eacmed-pdf', [
+      'data' => $this->pdfData,
+      'queue_number' => $this->pdfData['queue_number'] ?? '',
+      'preferred_date' => $this->pdfData['preferred_date'] ?? '',
+    ])
       ->margins(4, 10, 4, 10)
-      // ->format('a4')
       ->save($pdfAbsolutePath);
 
     $downloadUrl = URL::temporarySignedRoute('pdf.landing', now()->addDays(7), ['path' => $pdfSubpath]);

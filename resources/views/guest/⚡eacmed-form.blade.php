@@ -3,6 +3,7 @@
 use App\Jobs\SendEacmedDonorPdfEmail;
 use App\Models\Hospital;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 new class extends Component {
@@ -11,6 +12,16 @@ new class extends Component {
     public bool $submitted = false;
 
     public bool $consent = false;
+
+    public bool $is_representative = false;
+
+    public string $preferred_date = '';
+
+    public array $representative = [
+        'first_name' => '',
+        'surname' => '',
+        'student_employee_id' => '',
+    ];
 
     public array $personal = [
         'surname' => '',
@@ -63,6 +74,10 @@ new class extends Component {
                 'personal.city' => 'nullable|string',
                 'personal.province' => 'nullable|string',
                 'personal.zip_code' => 'nullable|string',
+                'preferred_date' => 'required|in:2026-03-13,2026-03-20',
+                'representative.first_name' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
+                'representative.surname' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
+                'representative.student_employee_id' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
             ],
             default => [],
         };
@@ -80,6 +95,9 @@ new class extends Component {
                 'personal.contact_no.required' => 'Contact number is required.',
                 'personal.email.required' => 'Email address is required.',
                 'personal.email.email' => 'Please enter a valid email address.',
+                'representative.first_name.required' => 'First name of the person being represented is required.',
+                'representative.surname.required' => 'Surname of the person being represented is required.',
+                'representative.student_employee_id.required' => 'Student/Employee ID of the person being represented is required.',
             ],
             default => [],
         };
@@ -88,6 +106,12 @@ new class extends Component {
     public function nextStep(): void
     {
         $this->validate($this->rulesForStep($this->step), $this->messagesForStep($this->step));
+
+        if ($this->step === 1 && \App\Models\Form::where('donor_email', $this->personal['email'] ?? '')->exists()) {
+            $this->addError('personal.email', 'This email has already been used to register for a blood donation.');
+            return;
+        }
+
         $this->step++;
         $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
     }
@@ -104,7 +128,29 @@ new class extends Component {
 
         $hospital = Hospital::where('name', 'LIKE', '%Emilio Aguinaldo%')->firstOrFail();
 
-        $pdfData = $this->personal;
+        if (
+            $hospital
+                ->forms()
+                ->where('donor_email', $this->personal['email'] ?? '')
+                ->where('form_data->preferred_date', $this->preferred_date)
+                ->exists()
+        ) {
+            $this->addError('personal.email', 'This email is already registered for the selected donation date.');
+            $this->step = 1;
+            $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
+            return;
+        }
+
+        $existingCount = $hospital->forms()->where('form_data->preferred_date', $this->preferred_date)->count();
+
+        $queueNumber = 'EAC' . str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
+
+        $pdfData = [
+            'personal' => $this->personal,
+            'representative' => $this->is_representative ? $this->representative : null,
+            'preferred_date' => $this->preferred_date,
+            'queue_number' => $queueNumber,
+        ];
 
         $hospital->forms()->create([
             'donor_name' => trim($this->personal['surname'] . ', ' . $this->personal['first_name'] . ' ' . $this->personal['middle_name']),
@@ -201,6 +247,25 @@ new class extends Component {
                         </div>
                     </div>
 
+                    {{-- Representative Donor --}}
+                    <div class="mb-5 rounded-xl border border-amber-200 bg-amber-50/40 p-4">
+                        <flux:checkbox wire:model.live="is_representative" label="I am donating as a Representative" />
+                        @if ($is_representative)
+                            <div class="mt-4 space-y-3" wire:transition>
+                                <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">Representative
+                                    For:</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <flux:input wire:model="representative.first_name" label="First Name"
+                                        placeholder="e.g. Juan" />
+                                    <flux:input wire:model="representative.surname" label="Surname"
+                                        placeholder="e.g. Dela Cruz" />
+                                    <flux:input wire:model="representative.student_employee_id"
+                                        label="Student / Employee ID" placeholder="e.g. 2024-00123" />
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
                     <div class="space-y-5">
                         {{-- Name --}}
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -267,6 +332,12 @@ new class extends Component {
                             </div>
                         </div>
 
+                        {{-- Preferred Donation Date --}}
+                        <flux:select wire:model="preferred_date" label="Preferred Donation Date *">
+                            <flux:select.option value="">Select a date...</flux:select.option>
+                            <flux:select.option value="2026-03-13">March 13, 2026</flux:select.option>
+                            <flux:select.option value="2026-03-20">March 20, 2026</flux:select.option>
+                        </flux:select>
 
                     </div>
                 </div>

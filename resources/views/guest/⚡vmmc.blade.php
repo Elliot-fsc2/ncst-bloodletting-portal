@@ -4,6 +4,7 @@ use App\Jobs\SendDonorPdfEmail;
 use App\Mail\FormSubmitted;
 use App\Models\Form;
 use App\Models\Hospital;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 new class extends Component {
@@ -85,6 +86,16 @@ new class extends Component {
 
     public bool $consent = false;
 
+    public bool $is_representative = false;
+
+    public string $preferred_date = '';
+
+    public array $representative = [
+        'first_name' => '',
+        'surname' => '',
+        'student_employee_id' => '',
+    ];
+
     // ── Per-step validation ───────────────────────────────────────────────
     protected function rulesForStep(int $step): array
     {
@@ -100,6 +111,10 @@ new class extends Component {
                 'personal.city_province' => 'required|string',
                 'personal.contact_number' => 'required|string',
                 'personal.email' => 'required|email',
+                'preferred_date' => 'required|in:2026-03-13,2026-03-20',
+                'representative.first_name' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
+                'representative.surname' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
+                'representative.student_employee_id' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
             ],
             2 => [
                 'history.donated_before' => 'required|in:yes,no',
@@ -155,6 +170,12 @@ new class extends Component {
     public function nextStep(): void
     {
         $this->validate($this->rulesForStep($this->step), $this->messagesForStep($this->step));
+
+        if ($this->step === 1 && \App\Models\Form::where('donor_email', $this->personal['email'] ?? '')->exists()) {
+            $this->addError('personal.email', 'This email has already been used to register for a blood donation.');
+            return;
+        }
+
         $this->step++;
         $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
     }
@@ -181,6 +202,17 @@ new class extends Component {
 
         $vmmc = Hospital::where('name', 'Veterans Memorial Medical Center')->firstOrFail();
 
+        if ($vmmc->forms()->where('donor_email', $this->personal['email'])->where('form_data->preferred_date', $this->preferred_date)->exists()) {
+            $this->addError('personal.email', 'This email is already registered for the selected donation date.');
+            $this->step = 1;
+            $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
+            return;
+        }
+
+        $existingCount = $vmmc->forms()->where('form_data->preferred_date', $this->preferred_date)->count();
+
+        $queueNumber = 'VMC' . str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
+
         $vmmc->forms()->create([
             'donor_name' => trim($this->personal['surname'] . ', ' . $this->personal['given_name'] . ' ' . $this->personal['middle_name']),
             'donor_email' => $this->personal['email'],
@@ -192,6 +224,9 @@ new class extends Component {
                 'section_c' => $this->section_c,
                 'section_d' => $this->section_d,
                 'section_e' => $this->section_e,
+                'representative' => $this->is_representative ? $this->representative : null,
+                'preferred_date' => $this->preferred_date,
+                'queue_number' => $queueNumber,
             ],
         ]);
 
@@ -208,6 +243,8 @@ new class extends Component {
             'section_c' => $this->section_c,
             'section_d' => $this->section_d,
             'section_e' => $this->section_e,
+            'preferred_date' => $this->preferred_date,
+            'queue_number' => $queueNumber,
         ];
 
         SendDonorPdfEmail::dispatch($donorName, $email, $filename, $pdfData);
@@ -303,6 +340,25 @@ new class extends Component {
                         </div>
                     </div>
 
+                    {{-- Representative Donor --}}
+                    <div class="mb-5 rounded-xl border border-amber-200 bg-amber-50/40 p-4">
+                        <flux:checkbox wire:model.live="is_representative" label="I am donating as a Representative" />
+                        @if ($is_representative)
+                            <div class="mt-4 space-y-3" wire:transition>
+                                <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider">Representative
+                                    For:</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <flux:input wire:model="representative.first_name" label="First Name"
+                                        placeholder="e.g. Juan" />
+                                    <flux:input wire:model="representative.surname" label="Surname"
+                                        placeholder="e.g. Dela Cruz" />
+                                    <flux:input wire:model="representative.student_employee_id"
+                                        label="Student / Employee ID" placeholder="e.g. 2024-00123" />
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
                     <div class="space-y-5">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <flux:input wire:model="personal.surname" label="Surname *" placeholder="e.g. Dela Cruz" />
@@ -347,6 +403,13 @@ new class extends Component {
                             <flux:input wire:model="personal.contact_number" label="Contact Number *"
                                 placeholder="09XX XXX XXXX" />
                         </div>
+
+                        {{-- Preferred Donation Date --}}
+                        <flux:select wire:model="preferred_date" label="Preferred Donation Date *">
+                            <flux:select.option value="">Select a date...</flux:select.option>
+                            <flux:select.option value="2026-03-13">March 13, 2026</flux:select.option>
+                            <flux:select.option value="2026-03-20">March 20, 2026</flux:select.option>
+                        </flux:select>
                     </div>
                 </div>
             @endif

@@ -30,7 +30,11 @@ class SendUmcDonorPdfEmail implements ShouldQueue
 
     File::ensureDirectoryExists(Storage::disk('local')->path('private/pdfs/umc'));
 
-    Pdf::view('pdf.umc-pdf', ['data' => $this->pdfData])
+    Pdf::view('pdf.umc-pdf', [
+      'data' => $this->pdfData,
+      'queue_number' => $this->pdfData['queue_number'] ?? '',
+      'preferred_date' => $this->pdfData['preferred_date'] ?? '',
+    ])
       ->margins(4, 10, 4, 10)
       ->format('a4')
       ->save($pdfAbsolutePath);

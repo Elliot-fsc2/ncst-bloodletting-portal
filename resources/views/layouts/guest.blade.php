@@ -31,10 +31,6 @@
             <p class="text-center text-[0.7rem] mt-2">
                 Your information is kept confidential and used only for blood donation purposes.
             </p>
-            <p class="text-center text-[0.7rem] mt-2 italic text-red-400 font-medium tracking-wide">
-                Made with ❤️ by Adrian@A3Tech
-            </p>
-
         </div>
     </div>
     @livewireScripts

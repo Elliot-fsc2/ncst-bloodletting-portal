@@ -9,11 +9,13 @@
 <body class="bg-white text-black font-sans text-[10px]">
 
     @php
-        $surname = strtoupper($data['surname'] ?? ($data['last_name'] ?? ''));
-        $firstName = strtoupper($data['first_name'] ?? '');
-        $middleName = strtoupper($data['middle_name'] ?? '');
+        $personal = $data['personal'] ?? $data;
 
-        $rawBirthdate = $data['birthdate'] ?? '';
+        $surname = strtoupper($personal['surname'] ?? ($personal['last_name'] ?? ''));
+        $firstName = strtoupper($personal['first_name'] ?? '');
+        $middleName = strtoupper($personal['middle_name'] ?? '');
+
+        $rawBirthdate = $personal['birthdate'] ?? '';
         $birthdate = '';
         if ($rawBirthdate) {
             try {
@@ -23,24 +25,24 @@
             }
         }
 
-        $age = $data['age'] ?? '';
-        $gender = strtolower($data['gender'] ?? ($data['sex'] ?? ''));
-        $civilStatus = $data['civil_status'] ?? '';
-        $contactNo = $data['contact_no'] ?? ($data['cellphone'] ?? '');
-        $email = $data['email'] ?? ($data['email_address'] ?? '');
-        $nationality = $data['nationality'] ?? '';
-        $occupation = $data['occupation'] ?? '';
+        $age = $personal['age'] ?? '';
+        $gender = strtolower($personal['gender'] ?? ($personal['sex'] ?? ''));
+        $civilStatus = $personal['civil_status'] ?? '';
+        $contactNo = $personal['contact_no'] ?? ($personal['cellphone'] ?? '');
+        $email = $personal['email'] ?? ($personal['email_address'] ?? '');
+        $nationality = $personal['nationality'] ?? '';
+        $occupation = $personal['occupation'] ?? '';
 
-        $streetAddress = $data['street_address'] ?? ($data['address'] ?? '');
-        $barangay = $data['barangay'] ?? '';
-        $townDistrict = $data['town_district'] ?? '';
-        $city = $data['city'] ?? '';
-        $province = $data['province'] ?? '';
-        $zipCode = $data['zip_code'] ?? '';
+        $streetAddress = $personal['street_address'] ?? ($personal['address'] ?? '');
+        $barangay = $personal['barangay'] ?? '';
+        $townDistrict = $personal['town_district'] ?? '';
+        $city = $personal['city'] ?? '';
+        $province = $personal['province'] ?? '';
+        $zipCode = $personal['zip_code'] ?? '';
 
-        $donorType = strtolower($data['donor_type'] ?? '');
-        $donorStatus = strtolower($data['donor_status'] ?? '');
-        $collection = strtolower($data['method_of_collection'] ?? '');
+        $donorType = strtolower($personal['donor_type'] ?? '');
+        $donorStatus = strtolower($personal['donor_status'] ?? '');
+        $collection = strtolower($personal['method_of_collection'] ?? '');
 
         function eacCheck(bool $checked): string
         {
@@ -49,6 +51,13 @@
     @endphp
 
     <div class="max-w-4xl mx-auto px-4 py-2">
+
+        <div class="text-xs leading-snug mb-1">
+            <p class="font-semibold">Queue No: {{ $queue_number ?? '' }} | NCST Blood Donation</p>
+            <p>NCST,
+                {{ isset($preferred_date) && $preferred_date ? \Carbon\Carbon::parse($preferred_date)->format('F j, Y') : '' }},
+                8:00 AM</p>
+        </div>
 
         {{-- ===== HEADER ===== --}}
         <div class="flex items-center justify-center gap-4 mb-1">

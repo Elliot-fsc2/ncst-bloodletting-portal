@@ -24,7 +24,13 @@
         $age = !empty($p['birthdate']) ? \Carbon\Carbon::parse($p['birthdate'])->age : '';
     @endphp
     <div class="page">
-        <div class="max-w-5xl mx-auto bg-white text-black font-sans">
+        <div class="max-w-5xl mx-auto bg-white text-black font-sans relative">
+            <div class="text-xs leading-snug mb-1">
+                <p class="font-semibold">Queue No: {{ $queue_number ?? '' }} | NCST Blood Donation</p>
+                <p>NCST,
+                    {{ isset($preferred_date) && $preferred_date ? \Carbon\Carbon::parse($preferred_date)->format('F j, Y') : '' }},
+                    8:00 AM</p>
+            </div>
             <table class="w-full border-collapse border border-black text-center text-sm leading-tight mb-2">
                 <tbody>
                     <tr>
