@@ -418,23 +418,3 @@ new class extends Component {
         </flux:card>
     @endif
 </div>
-
-@script
-    <script>
-        $wire.on('open-pdf', ({
-            data
-        }) => {
-            fetch('{{ route('redcross.pdf') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify(data),
-                })
-                .then(res => res.blob())
-                .then(blob => window.open(URL.createObjectURL(blob), '_blank'))
-                .catch(err => alert('Error generating PDF'));
-        });
-    </script>
-@endscript

@@ -5,11 +5,15 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
+Route::fallback(function () {
+  return redirect()->route('home');
+});
+
 Route::livewire('/', 'guest::donation-form')->name('home');
 
-Route::view('/vmmc-pdf', 'pdf.vmmc-pdf');
+Route::view('/vmmc-pdf', 'pdf.vmmc-pdf')->name('vmmc.pdf');
 Route::view('/umc-pdf', 'pdf.umc-pdf');
-Route::view('/redcross-pdf', 'pdf.redcross-pdf');
+Route::view('/redcross-pdf', 'pdf.redcross-pdf')->name('redcross.pdf');
 Route::view('/tsmc-pdf', 'pdf.tsmc-pdf');
 Route::view('/eacmed-pdf', 'pdf.eacmed-pdf');
 

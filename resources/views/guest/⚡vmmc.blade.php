@@ -1014,29 +1014,3 @@ new class extends Component {
         </flux:card>
     @endif
 </div>
-
-@script
-    <script>
-        $wire.on('open-pdf', ({
-            data
-        }) => {
-            fetch('{{ route('vmmc.pdf') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify(data),
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error('PDF generation failed: ' + res.status);
-                    return res.blob();
-                })
-                .then(blob => {
-                    const blobUrl = URL.createObjectURL(blob);
-                    window.open(blobUrl, '_blank');
-                })
-                .catch(err => alert(err.message));
-        });
-    </script>
-@endscript
