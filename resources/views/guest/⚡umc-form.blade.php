@@ -135,6 +135,13 @@ new class extends Component {
 
         $existingCount = $hospital->forms()->where('form_data->preferred_date', $this->preferred_date)->count();
 
+        if ($existingCount >= 250) {
+            $this->addError('preferred_date', 'Registration for this date is now full. The maximum of 250 registrations has been reached.');
+            $this->step = 1;
+            $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
+            return;
+        }
+
         $queueNumber = 'DLS' . str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
 
         $hospital->forms()->create([
