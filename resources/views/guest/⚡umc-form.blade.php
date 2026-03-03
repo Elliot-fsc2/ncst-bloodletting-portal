@@ -21,6 +21,7 @@ new class extends Component {
         'first_name' => '',
         'surname' => '',
         'student_employee_id' => '',
+        'house_heroes' => '',
     ];
 
     public array $personal = [
@@ -38,6 +39,8 @@ new class extends Component {
         'nationality' => '',
         'telephone' => '',
         'email' => '',
+        'bloodtype' => '',
+        'house_heroes' => '',
     ];
 
     public function updatedPersonalBirthdate(string $value): void
@@ -72,6 +75,9 @@ new class extends Component {
                 'representative.first_name' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
                 'representative.surname' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
                 'representative.student_employee_id' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
+                'personal.bloodtype' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-,Unknown',
+                'personal.house_heroes' => [Rule::requiredIf(fn() => !$this->is_representative), 'nullable', 'string', 'in:Makadiyos,Makabayan,Makakalikasan,Makatao'],
+                'representative.house_heroes' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string', 'in:Makadiyos,Makabayan,Makakalikasan,Makatao'],
             ],
             default => [],
         };
@@ -264,6 +270,13 @@ new class extends Component {
                                     <flux:input wire:model="representative.student_employee_id"
                                         label="Student / Employee ID" placeholder="e.g. 2024-00123" />
                                 </div>
+                                <flux:select wire:model="representative.house_heroes" label="House of Heroes *">
+                                    <flux:select.option value="">Select...</flux:select.option>
+                                    <flux:select.option value="Makadiyos">Makadiyos</flux:select.option>
+                                    <flux:select.option value="Makabayan">Makabayan</flux:select.option>
+                                    <flux:select.option value="Makakalikasan">Makakalikasan</flux:select.option>
+                                    <flux:select.option value="Makatao">Makatao</flux:select.option>
+                                </flux:select>
                             </div>
                         @endif
                     </div>
@@ -296,6 +309,18 @@ new class extends Component {
                                 <flux:select.option value="Married">Married</flux:select.option>
                                 <flux:select.option value="Widow">Widow</flux:select.option>
                             </flux:select>
+                            <flux:select wire:model="personal.bloodtype" label="Blood Type *">
+                                <flux:select.option value="">Select...</flux:select.option>
+                                <flux:select.option value="A+">A+</flux:select.option>
+                                <flux:select.option value="A-">A-</flux:select.option>
+                                <flux:select.option value="B+">B+</flux:select.option>
+                                <flux:select.option value="B-">B-</flux:select.option>
+                                <flux:select.option value="AB+">AB+</flux:select.option>
+                                <flux:select.option value="AB-">AB-</flux:select.option>
+                                <flux:select.option value="O+">O+</flux:select.option>
+                                <flux:select.option value="O-">O-</flux:select.option>
+                                <flux:select.option value="Unknown">I don't know</flux:select.option>
+                            </flux:select>
                         </div>
 
                         {{-- Contact / Nationality --}}
@@ -323,6 +348,16 @@ new class extends Component {
                             <flux:input wire:model="personal.business_address"
                                 label="Lugar ng Trabaho / Business Address" placeholder="Company/school address" />
                         </div>
+
+                        @if (!$is_representative)
+                            <flux:select wire:model="personal.house_heroes" label="House of Heroes *">
+                                <flux:select.option value="">Select...</flux:select.option>
+                                <flux:select.option value="Makadiyos">Makadiyos</flux:select.option>
+                                <flux:select.option value="Makabayan">Makabayan</flux:select.option>
+                                <flux:select.option value="Makakalikasan">Makakalikasan</flux:select.option>
+                                <flux:select.option value="Makatao">Makatao</flux:select.option>
+                            </flux:select>
+                        @endif
 
                         {{-- Preferred Donation Date --}}
                         <flux:select wire:model="preferred_date" label="Preferred Donation Date *">
@@ -377,6 +412,8 @@ new class extends Component {
         'Address' => $personal['address'] ?: '—',
         'Occupation' => $personal['occupation'] ?: '—',
         'Business Address' => $personal['business_address'] ?: '—',
+        'Blood Type' => $personal['bloodtype'] ?: '—',
+        'House of Heroes' => $is_representative ? ($representative['house_heroes'] ?: '—') : ($personal['house_heroes'] ?: '—'),
         'Email' => $personal['email'] ?: '—',
     ] as $label => $val)
                                     <div class="bg-white px-3 py-2">
@@ -387,6 +424,30 @@ new class extends Component {
                                 @endforeach
                             </div>
                         </div>
+
+                        @if ($is_representative)
+                            <div class="rounded-xl border border-amber-200 overflow-hidden">
+                                <div class="flex items-center gap-2 bg-amber-50 px-4 py-2.5 border-b border-amber-100">
+                                    <span>🔁</span>
+                                    <p class="text-xs font-bold text-amber-700 uppercase tracking-wider">Donating as
+                                        Representative For</p>
+                                </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-px bg-gray-100">
+                                    @foreach ([
+        'First Name' => $representative['first_name'],
+        'Surname' => $representative['surname'],
+        'Student/Employee ID' => $representative['student_employee_id'],
+        'House of Heroes' => $representative['house_heroes'] ?: '—',
+    ] as $label => $val)
+                                        <div class="bg-white px-3 py-2">
+                                            <p class="text-[0.65rem] text-gray-400 uppercase tracking-wide mb-0.5">
+                                                {{ $label }}</p>
+                                            <p class="font-medium text-gray-800">{{ $val }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
 
                     </div>
 
@@ -430,7 +491,7 @@ new class extends Component {
                             class="bg-red-600! hover:bg-red-700! border-red-600!">Next</flux:button>
                     @else
                         <flux:button wire:click="submit" variant="primary" icon="check" :disabled="!$consent"
-                            class="bg-red-600! hover:bg-red-700! border-red-600!">Submit & Generate PDF</flux:button>
+                            class="bg-red-600! hover:bg-red-700! border-red-600!">Submit</flux:button>
                     @endif
                 </div>
             </div>
