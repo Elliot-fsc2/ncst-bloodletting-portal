@@ -14,12 +14,10 @@
             {{-- Blood Donation Header --}}
             <div class="flex flex-col items-center gap-2">
                 <div
-                    class="flex items-center justify-center size-14 rounded-full shrink-0 [background:linear-gradient(135deg,#ef4444,#b91c1c)] [box-shadow:0_4px_18px_rgba(220,38,38,0.4)]">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-6 h-6">
-                        <path d="M12 2C12 2 5 10.5 5 15a7 7 0 0 0 14 0C19 10.5 12 2 12 2z" />
-                    </svg>
+                    class="flex items-center justify-center size-14 rounded-full">
+                    <img src="{{ asset('images/ncst-logo.png') }}" alt="NCST Logo" >
                 </div>
-                <span class="text-[0.68rem] font-medium tracking-[0.06em] uppercase text-red-400">Voluntary Blood
+                <span class="text-[0.68rem] font-medium tracking-[0.06em] uppercase">Voluntary Blood
                     Donation Registration</span>
             </div>
 
