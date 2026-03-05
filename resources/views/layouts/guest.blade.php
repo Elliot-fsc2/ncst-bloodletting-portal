@@ -11,17 +11,14 @@
     <div class="relative z-10 flex min-h-screen flex-col items-center justify-center gap-4 p-6 md:p-10">
         <div class="flex w-full max-w-3xl flex-col gap-4">
 
-            {{-- Blood Donation Header --}}
             <div class="flex flex-col items-center gap-2">
-                <div
-                    class="flex items-center justify-center size-14 rounded-full">
-                    <img src="{{ asset('images/ncst-logo.png') }}" alt="NCST Logo" >
+                <div class="flex items-center justify-center size-14 rounded-full">
+                    <img src="{{ asset('images/ncst-logo.png') }}" alt="NCST Logo">
                 </div>
                 <span class="text-[0.68rem] font-medium tracking-[0.06em] uppercase">Voluntary Blood
                     Donation Registration</span>
             </div>
 
-            {{-- Main slot --}}
             <div class="flex flex-col gap-6">
                 {{ $slot }}
             </div>

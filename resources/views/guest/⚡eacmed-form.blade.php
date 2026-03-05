@@ -239,7 +239,7 @@ new class extends Component {
 
                 @foreach ([['label' => 'Personal'], ['label' => 'Confirm']] as $i => $s)
                     @php $n = $i + 1; @endphp
-                    <div class="flex flex-col items-center z-10 gap-1.5 bg-gray-50 px-2">
+                    <div class="flex flex-col items-center z-10 gap-1.5 px-2">
                         <div @class([
                             'flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold border-2 transition-all duration-300',
                             'bg-red-600 border-red-600 text-white shadow-md shadow-red-200' =>

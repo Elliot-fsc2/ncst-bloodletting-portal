@@ -220,7 +220,8 @@ new class extends Component {
                 <p class="text-sm text-gray-600 mb-1">We have reached the maximum registration for this blood donation
                     drive.</p>
                 <p class="text-sm text-gray-600">If you believe this is a mistake or need further assistance, please
-                    <strong>contact the admin</strong>.</p>
+                    <strong>contact the admin</strong>.
+                </p>
             </div>
         </flux:card>
     @elseif ($submitted)
@@ -250,7 +251,7 @@ new class extends Component {
 
                 @foreach ([['label' => 'Personal'], ['label' => 'Confirm']] as $i => $s)
                     @php $n = $i + 1; @endphp
-                    <div class="flex flex-col items-center z-10 gap-1.5 bg-gray-50 px-2">
+                    <div class="flex flex-col items-center z-10 gap-1.5 px-2">
                         <div @class([
                             'flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold border-2 transition-all duration-300',
                             'bg-red-600 border-red-600 text-white shadow-md shadow-red-200' =>
