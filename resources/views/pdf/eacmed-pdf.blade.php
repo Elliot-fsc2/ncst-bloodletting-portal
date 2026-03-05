@@ -44,10 +44,7 @@
         $donorStatus = strtolower($personal['donor_status'] ?? '');
         $collection = strtolower($personal['method_of_collection'] ?? '');
 
-        function eacCheck(bool $checked): string
-        {
-            return $checked ? '&#10003;' : '';
-        }
+        $eacCheck = fn(bool $checked): string => $checked ? '&#10003;' : '';
     @endphp
 
     <div class="max-w-4xl mx-auto px-4 py-2">
@@ -116,12 +113,12 @@
                     <div class="flex gap-3 min-h-[14px] items-center">
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck($gender === 'male') !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck($gender === 'male') !!}</span>
                             Male
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck($gender === 'female') !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck($gender === 'female') !!}</span>
                             Female
                         </span>
                     </div>
@@ -198,44 +195,44 @@
                     <div class="flex flex-wrap gap-x-4 gap-y-0.5">
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorType, 'walk') || str_contains($donorType, 'voluntary')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorType, 'walk') || str_contains($donorType, 'voluntary')) !!}</span>
                             Walk-in/Voluntary
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorType, 'autologous')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorType, 'autologous')) !!}</span>
                             Autologous
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorType, 'mbd')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorType, 'mbd')) !!}</span>
                             MBD
                         </span>
                     </div>
                     <div class="flex flex-wrap gap-x-4 gap-y-0.5 mt-0.5">
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorStatus, 'new')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorStatus, 'new')) !!}</span>
                             New
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorStatus, 'repeat')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorStatus, 'repeat')) !!}</span>
                             Repeat
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorStatus, 'first')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorStatus, 'first')) !!}</span>
                             First Time
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorStatus, 'lapsed')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorStatus, 'lapsed')) !!}</span>
                             Lapsed
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($donorStatus, 'retained')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($donorStatus, 'retained')) !!}</span>
                             Retained
                         </span>
                     </div>
@@ -251,12 +248,12 @@
                     <div class="flex gap-6">
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($collection, 'whole') || str_contains($collection, 'conventional')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($collection, 'whole') || str_contains($collection, 'conventional')) !!}</span>
                             Whole Blood (Conventional)
                         </span>
                         <span>
                             <span
-                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! eacCheck(str_contains($collection, 'apheresis')) !!}</span>
+                                class="border border-black w-3 h-3 inline-flex items-center justify-center text-[8px]">{!! $eacCheck(str_contains($collection, 'apheresis')) !!}</span>
                             Apheresis
                         </span>
                     </div>

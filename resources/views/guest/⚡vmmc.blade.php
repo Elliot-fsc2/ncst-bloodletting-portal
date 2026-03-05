@@ -9,7 +9,10 @@ use Livewire\Component;
 
 new class extends Component {
     public int $step = 1;
+
     public bool $submitted = false;
+
+    public bool $registrationFull = false;
 
     // PERSONAL DATA
     public array $personal = [
@@ -84,6 +87,15 @@ new class extends Component {
         return $msgs;
     }
 
+    public function mount(): void
+    {
+        $hospital = Hospital::where('name', 'Veterans Memorial Medical Center')->first();
+
+        if ($hospital) {
+            $this->registrationFull = $hospital->forms()->count() >= 250;
+        }
+    }
+
     public function nextStep(): void
     {
         $this->validate($this->rulesForStep($this->step), $this->messagesForStep($this->step));
@@ -118,15 +130,18 @@ new class extends Component {
             return;
         }
 
-        $existingCount = $vmmc->forms()->where('form_data->preferred_date', $this->preferred_date)->count();
+        $totalCount = $vmmc->forms()->count();
 
-        if ($existingCount >= 250) {
-            $this->addError('preferred_date', 'Registration for this date is now full. The maximum of 250 registrations has been reached.');
+        if ($totalCount >= 250) {
+            $this->registrationFull = true;
+            $this->addError('preferred_date', 'Registration is now full.');
             $this->step = 1;
             $this->js('window.scrollTo({top: 0, behavior: "smooth"})');
 
             return;
         }
+
+        $existingCount = $vmmc->forms()->where('form_data->preferred_date', $this->preferred_date)->count();
 
         $queueNumber = 'VMC' . str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
 
@@ -160,8 +175,24 @@ new class extends Component {
 }; ?>
 
 <div>
-    {{-- Success State --}}
-    @if ($submitted)
+    {{-- Registration Full Banner --}}
+    @if ($registrationFull)
+        <flux:card class="shadow-sm border-red-200!">
+            <div class="text-center py-10 px-6">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mx-auto mb-5">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-red-700 mb-2">Registration is Now Full</h2>
+                <p class="text-sm text-gray-600 mb-1">We have reached the maximum registration for this blood donation
+                    drive.</p>
+                <p class="text-sm text-gray-600">If you believe this is a mistake or need further assistance, please
+                    <strong>contact the admin</strong>.</p>
+            </div>
+        </flux:card>
+    @elseif ($submitted)
         <flux:card class="shadow-sm">
             <div class="text-center py-12 px-6">
                 <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mx-auto mb-5">
