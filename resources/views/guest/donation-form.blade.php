@@ -27,6 +27,8 @@ new #[Layout('layouts.guest')] class extends Component {
         <livewire:guest::eacmed-form />
     @elseif ($priorityHospitalTag === 'De La Salle University Medical Center')
         <livewire:guest::umc-form />
+    @elseif ($priorityHospitalTag === 'UP Philippine General Hospital')
+        <livewire:guest::pgh-form />
     @else
         <livewire:guest::vmmc />
     @endif

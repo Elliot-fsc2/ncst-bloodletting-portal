@@ -532,10 +532,10 @@ new class extends Component {
                     <span class="text-xs text-gray-400 hidden sm:block">Step {{ $step }} of 2</span>
                     @if ($step < 2)
                         <flux:button wire:click="nextStep" variant="primary" icon-trailing="chevron-right"
-                            class="bg-red-600! hover:bg-red-700! border-red-600!">Next</flux:button>
+                            class="bg-black! hover:bg-gray-900! border-black!">Next</flux:button>
                     @else
                         <flux:button wire:click="submit" variant="primary" icon="check"
-                            x-bind:disabled="!$wire.consent" class="bg-red-600! hover:bg-red-700! border-red-600!">
+                            x-bind:disabled="!$wire.consent" class="bg-black! hover:bg-gray-900! border-black!">
                             Submit</flux:button>
                     @endif
                 </div>

@@ -488,10 +488,12 @@ new class extends Component {
                 <div class="flex items-center gap-3">
                     <span class="text-xs text-gray-400 hidden sm:block">Step {{ $step }} of 2</span>
                     @if ($step < 2)
-                        <flux:button wire:click="nextStep" variant="primary" icon:trailing="chevron-right">Next
+                        <flux:button wire:click="nextStep" variant="primary" icon:trailing="chevron-right"
+                            class="bg-black! hover:bg-gray-900! border-black!">Next
                         </flux:button>
                     @else
-                        <flux:button wire:click="submit" variant="primary" :disabled="!$consent" icon="check">
+                        <flux:button wire:click="submit" variant="primary" :disabled="!$consent" icon="check"
+                            class="bg-black! hover:bg-gray-900! border-black!">
                             Submit
                         </flux:button>
                     @endif

@@ -204,12 +204,15 @@ new class extends Component {
             <div class="text-center py-10 px-6">
                 <div class="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mx-auto mb-5">
                     <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                     </svg>
                 </div>
                 <h2 class="text-xl font-bold text-red-700 mb-2">Registration is Now Full</h2>
-                <p class="text-sm text-gray-600 mb-1">We have reached the maximum registration for this blood donation drive.</p>
-                <p class="text-sm text-gray-600">If you believe this is a mistake or need further assistance, please <strong>contact the admin</strong>.</p>
+                <p class="text-sm text-gray-600 mb-1">We have reached the maximum registration for this blood donation
+                    drive.</p>
+                <p class="text-sm text-gray-600">If you believe this is a mistake or need further assistance, please
+                    <strong>contact the admin</strong>.</p>
             </div>
         </flux:card>
     @elseif ($submitted)
@@ -533,10 +536,10 @@ new class extends Component {
                     <span class="text-xs text-gray-400 hidden sm:block">Step {{ $step }} of 2</span>
                     @if ($step < 2)
                         <flux:button wire:click="nextStep" variant="primary" icon-trailing="chevron-right"
-                            class="bg-red-600! hover:bg-red-700! border-red-600!">Next</flux:button>
+                            class="bg-black! hover:bg-gray-900! border-black!">Next</flux:button>
                     @else
                         <flux:button wire:click="submit" variant="primary" icon="check" :disabled="!$consent"
-                            class="bg-red-600! hover:bg-red-700! border-red-600!">Submit</flux:button>
+                            class="bg-black! hover:bg-gray-900! border-black!">Submit</flux:button>
                     @endif
                 </div>
             </div>

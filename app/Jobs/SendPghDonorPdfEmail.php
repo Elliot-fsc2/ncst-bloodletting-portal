@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Mail\FormSubmitted;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Spatie\LaravelPdf\Facades\Pdf;
+
+class SendPghDonorPdfEmail implements ShouldQueue
+{
+  use Queueable;
+
+  public function __construct(
+    public string $donorName,
+    public string $donorEmail,
+    public string $filename,
+    public array $pdfData,
+  ) {
+  }
+
+  public function handle(): void
+  {
+    $pdfSubpath = 'pgh/' . $this->filename;
+    $pdfAbsolutePath = Storage::disk('local')->path('private/pdfs/' . $pdfSubpath);
+
+    File::ensureDirectoryExists(Storage::disk('local')->path('private/pdfs/pgh'));
+
+    Pdf::view('pdf.pgh-pdf', [
+      'data' => $this->pdfData,
+      'queue_number' => $this->pdfData['queue_number'] ?? '',
+      'preferred_date' => $this->pdfData['preferred_date'] ?? '',
+    ])
+      ->margins(4, 10, 4, 10)
+      ->format('a4')
+      ->save($pdfAbsolutePath);
+
+    $downloadUrl = URL::temporarySignedRoute('pdf.landing', now()->addDays(7), ['path' => $pdfSubpath]);
+
+    Mail::to($this->donorEmail)->send(new FormSubmitted($this->donorName, $downloadUrl));
+  }
+}

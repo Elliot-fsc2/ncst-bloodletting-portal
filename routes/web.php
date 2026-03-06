@@ -16,6 +16,7 @@ Route::view('/umc-pdf', 'pdf.umc-pdf');
 Route::view('/redcross-pdf', 'pdf.redcross-pdf');
 Route::view('/tsmc-pdf', 'pdf.tsmc-pdf');
 Route::view('/eacmed-pdf', 'pdf.eacmed-pdf');
+Route::view('/pgh-pdf', 'pdf.pgh-pdf');
 
 Route::get('/download-pdf/{path}', function (string $path) {
 
