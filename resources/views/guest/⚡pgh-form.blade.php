@@ -70,7 +70,7 @@ new class extends Component {
                 'personal.first_name' => 'required|string',
                 'personal.birthdate' => 'required|date',
                 'personal.gender' => 'required|in:Male,Female',
-                'personal.email' => 'required|email',
+                'personal.email' => 'required|email|unique:forms,donor_email',
                 'preferred_date' => 'required|date',
                 'personal.middle_name' => 'nullable|string',
                 'personal.birthplace' => 'nullable|string',
@@ -107,6 +107,7 @@ new class extends Component {
                 'personal.gender.required' => 'Gender is required.',
                 'personal.email.required' => 'Email address is required.',
                 'personal.email.email' => 'Please enter a valid email address.',
+                'personal.email.unique' => 'This email is already used.',
                 'preferred_date.required' => 'Please select a preferred donation date.',
                 'representative.first_name.required' => 'First name of the person being represented is required.',
                 'representative.surname.required' => 'Surname of the person being represented is required.',
@@ -406,8 +407,11 @@ new class extends Component {
                         @endif
 
                         {{-- Preferred Donation Date --}}
-                        <flux:input wire:model="preferred_date" type="date" label="Preferred Donation Date *" />
-
+                        <flux:select wire:model="preferred_date" label="Preferred Donation Date *">
+                            <flux:select.option value="">Select a date...</flux:select.option>
+                            <flux:select.option value="2026-03-13">March 13, 2026</flux:select.option>
+                            <flux:select.option value="2026-03-20">March 20, 2026</flux:select.option>
+                        </flux:select>
                     </div>
 
                     <div class="flex justify-end mt-6">
