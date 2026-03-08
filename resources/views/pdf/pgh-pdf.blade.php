@@ -10,6 +10,13 @@
 
     <div class="max-w-4xl mx-auto px-2 py-1">
 
+        <div class="text-xs leading-snug mb-1">
+            <p class="font-semibold">Queue No: {{ $queue_number ?? '' }} | NCST Blood Donation</p>
+            <p>NCST,
+                {{ isset($preferred_date) && $preferred_date ? \Carbon\Carbon::parse($preferred_date)->format('F j, Y') : '' }},
+                8:00 AM</p>
+        </div>
+
         {{-- ===== HEADER ===== --}}
         <div class="flex items-stretch gap-1 border-b border-black pb-1 mb-0">
 

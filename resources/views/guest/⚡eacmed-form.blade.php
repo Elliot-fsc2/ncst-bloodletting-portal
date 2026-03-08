@@ -385,7 +385,7 @@ new class extends Component {
 
                         {{-- Preferred Mailing Address --}}
                         <div>
-                            <p class="text-sm font-medium text-gray-700 mb-2">Preferred Mailing Address</p>
+                            <p class="text-sm font-medium text-gray-700 mb-2">Address</p>
                             <div class="space-y-3">
                                 <flux:input wire:model="personal.street_address" label="Number, Street, Subdivision"
                                     placeholder="e.g. 123 Rizal St., Villa Verde" />
