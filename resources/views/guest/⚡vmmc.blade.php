@@ -62,7 +62,7 @@ new class extends Component {
                 'personal.barangay' => 'required|string',
                 'personal.city_province' => 'required|string',
                 'personal.contact_number' => 'required|string',
-                'personal.email' => 'required|email',
+                'personal.email' => 'required|email|unique:forms,donor_email',
                 'preferred_date' => 'required|in:2026-03-13,2026-03-20',
                 'representative.first_name' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
                 'representative.surname' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
@@ -83,6 +83,8 @@ new class extends Component {
             $msgs["{$field}.date"] = 'Please enter a valid date.';
             $msgs["{$field}.string"] = 'This field is required.';
         }
+
+        $msgs['personal.email.unique'] = 'This email is already used.';
 
         return $msgs;
     }

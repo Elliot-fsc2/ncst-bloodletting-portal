@@ -79,7 +79,7 @@ new class extends Component {
                 'personal.contact_no' => 'required|string',
                 'personal.middle_name' => 'nullable|string',
                 'personal.civil_status' => 'nullable|string',
-                'personal.email' => 'required|email',
+                'personal.email' => 'required|email|unique:forms,donor_email',
                 'personal.nationality' => 'nullable|string',
                 'personal.occupation' => 'nullable|string',
                 'personal.street_address' => 'nullable|string',
@@ -112,6 +112,7 @@ new class extends Component {
                 'personal.contact_no.required' => 'Contact number is required.',
                 'personal.email.required' => 'Email address is required.',
                 'personal.email.email' => 'Please enter a valid email address.',
+                'personal.email.unique' => 'This email is already used.',
                 'representative.first_name.required' => 'First name of the person being represented is required.',
                 'representative.surname.required' => 'Surname of the person being represented is required.',
                 'representative.student_employee_id.required' => 'Student/Employee ID of the person being represented is required.',
@@ -212,7 +213,8 @@ new class extends Component {
                 <p class="text-sm text-gray-600 mb-1">We have reached the maximum registration for this blood donation
                     drive.</p>
                 <p class="text-sm text-gray-600">If you believe this is a mistake or need further assistance, please
-                    <strong>contact the admin</strong>.</p>
+                    <strong>contact the admin</strong>.
+                </p>
             </div>
         </flux:card>
     @elseif ($submitted)
