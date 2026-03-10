@@ -17,7 +17,7 @@ new class extends Component {
 
     public bool $registrationFull = false;
 
-    public string $preferred_date = '';
+    public string $preferred_date = '2026-03-13';
 
     public array $representative = [
         'first_name' => '',
@@ -405,13 +405,6 @@ new class extends Component {
                                 </div>
                             </div>
                         </div>
-
-                        {{-- Preferred Donation Date --}}
-                        <flux:select wire:model="preferred_date" label="Preferred Donation Date *">
-                            <flux:select.option value="">Select a date...</flux:select.option>
-                            <flux:select.option value="2026-03-13">March 13, 2026</flux:select.option>
-                            <flux:select.option value="2026-03-20">March 20, 2026</flux:select.option>
-                        </flux:select>
 
                     </div>
                 </div>
