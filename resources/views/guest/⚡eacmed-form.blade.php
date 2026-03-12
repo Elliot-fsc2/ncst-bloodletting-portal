@@ -17,7 +17,7 @@ new class extends Component {
 
     public bool $registrationFull = false;
 
-    public string $preferred_date = '2026-03-13';
+    public string $preferred_date = '2026-03-20';
 
     public array $representative = [
         'first_name' => '',
