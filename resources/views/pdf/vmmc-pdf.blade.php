@@ -26,7 +26,7 @@
     <div class="page">
         <div class="max-w-5xl mx-auto bg-white text-black font-sans relative">
             <div class="text-xs leading-snug mb-1">
-                <p class="font-semibold">Queue No: {{ $queue_number ?? '' }} | NCST Blood Donation</p>
+                {{-- <p class="font-semibold">Queue No: {{ $queue_number ?? '' }} | NCST Blood Donation</p> --}}
                 <p>NCST,
                     {{ isset($preferred_date) && $preferred_date ? \Carbon\Carbon::parse($preferred_date)->format('F j, Y') : '' }},
                     8:00 AM</p>
