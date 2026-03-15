@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Jobs\SendEacmedDonorPdfEmail;
 use App\Models\Course;
@@ -331,6 +331,15 @@ new class extends Component {
             <flux:input wire:model="representative.student_employee_id"
               label="Student / Employee ID" placeholder="e.g. 2024-00123" />
           </div>
+          <flux:select wire:model="personal.course_id" label="Course *">
+            <flux:select.option value="">Select course...</flux:select.option>
+            @foreach ($courseOptions as $courseOption)
+            <flux:select.option wire:key="eacmed-representative-course-{{ $courseOption['id'] }}"
+              value="{{ $courseOption['id'] }}">
+              {{ $courseOption['name'] }} ({{ $courseOption['department'] ?: 'No Department' }})
+            </flux:select.option>
+            @endforeach
+          </flux:select>
           <flux:select wire:model="representative.house_heroes" label="House of Heroes *">
             <flux:select.option value="">Select...</flux:select.option>
             <flux:select.option value="Makadiyos">Makadiyos</flux:select.option>
@@ -387,39 +396,34 @@ new class extends Component {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <flux:input wire:model="personal.contact_no" label="Contact No. *"
             placeholder="09XX XXX XXXX" />
-          <flux:input wire:model="personal.email" type="email" label="E-mail Address"
-            placeholder="e.g. juan@email.com" />
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <flux:input wire:model="personal.nationality" label="Nationality"
-            placeholder="e.g. Filipino" />
-          <flux:input wire:model="personal.occupation" label="Occupation"
-            placeholder="e.g. Student, Nurse" />
-        </div>
+          <flux:input wire:model="personal.email" type="email" label="E-mail Address" placeholder="e.g. juan@email.com" />
 
-        <flux:select wire:model="personal.course_id" label="Course *">
-          <flux:select.option value="">Select course...</flux:select.option>
-          @foreach ($courseOptions as $courseOption)
-          <flux:select.option wire:key="eacmed-course-{{ $courseOption['id'] }}"
-            value="{{ $courseOption['id'] }}">
-            {{ $courseOption['name'] }} ({{ $courseOption['department'] ?: 'No Department' }})
-          </flux:select.option>
-          @endforeach
-        </flux:select>
+          @if (! $is_representative)
+          <flux:select wire:model="personal.course_id" label="Course *">
+            <flux:select.option value="">Select course...</flux:select.option>
+            @foreach ($courseOptions as $courseOption)
+            <flux:select.option wire:key="eacmed-course-{{ $courseOption['id'] }}"
+              value="{{ $courseOption['id'] }}">
+              {{ $courseOption['name'] }} ({{ $courseOption['department'] ?: 'No Department' }})
+            </flux:select.option>
+            @endforeach
+          </flux:select>
+          @endif
 
-        @if (!$is_representative)
-        <flux:select wire:model="personal.house_heroes" label="House of Heroes *">
-          <flux:select.option value="">Select...</flux:select.option>
-          <flux:select.option value="Makadiyos">Makadiyos</flux:select.option>
-          <flux:select.option value="Makabayan">Makabayan</flux:select.option>
-          <flux:select.option value="Makakalikasan">Makakalikasan</flux:select.option>
-          <flux:select.option value="Makatao">Makatao</flux:select.option>
-        </flux:select>
-        @endif
+          @if (!$is_representative)
+          <flux:select wire:model="personal.house_heroes" label="House of Heroes *">
+            <flux:select.option value="">Select...</flux:select.option>
+            <flux:select.option value="Makadiyos">Makadiyos</flux:select.option>
+            <flux:select.option value="Makabayan">Makabayan</flux:select.option>
+            <flux:select.option value="Makakalikasan">Makakalikasan</flux:select.option>
+            <flux:select.option value="Makatao">Makatao</flux:select.option>
+          </flux:select>
+          @endif
+        </div>
 
         {{-- Preferred Mailing Address --}}
         <div>
-          <p class="text-sm font-medium text-gray-700 mb-2">Address</p>
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Address</p>
           <div class="space-y-3">
             <flux:input wire:model="personal.street_address" label="Number, Street, Subdivision"
               placeholder="e.g. 123 Rizal St., Villa Verde" />
@@ -571,7 +575,7 @@ new class extends Component {
           <flux:button wire:click="nextStep" variant="primary" icon-trailing="chevron-right"
           class="bg-black! hover:bg-gray-900! border-black!">Next</flux:button>
           @else
-          <flux:button wire:click="submit" variant="primary" icon="check" :disabled="!$consent"
+          <flux:button wire:click="submit" variant="primary" icon="check" x-bind:disabled="! $wire.consent"
             class="bg-black! hover:bg-gray-900! border-black!">Submit</flux:button>
           @endif
       </div>

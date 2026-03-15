@@ -14,14 +14,14 @@ use Spatie\LaravelPdf\Facades\Pdf;
 class SendRedCrossDonorPdfEmail implements ShouldQueue
 {
   use Queueable;
+  public $timeout = 600;
 
   public function __construct(
     public string $donorName,
     public string $donorEmail,
     public string $filename,
     public array $pdfData,
-  ) {
-  }
+  ) {}
 
   public function handle(): void
   {

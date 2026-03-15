@@ -328,6 +328,15 @@ new class extends Component {
                         <flux:input wire:model="representative.student_employee_id"
                             label="Student / Employee ID" placeholder="e.g. 2024-00123" />
                     </div>
+                    <flux:select wire:model="personal.course_id" label="Course *">
+                        <flux:select.option value="">Select course...</flux:select.option>
+                        @foreach ($courseOptions as $courseOption)
+                        <flux:select.option wire:key="umc-representative-course-{{ $courseOption['id'] }}"
+                            value="{{ $courseOption['id'] }}">
+                            {{ $courseOption['name'] }} ({{ $courseOption['department'] ?: 'No Department' }})
+                        </flux:select.option>
+                        @endforeach
+                    </flux:select>
                     <flux:select wire:model="representative.house_heroes" label="House of Heroes *">
                         <flux:select.option value="">Select...</flux:select.option>
                         <flux:select.option value="Makadiyos">Makadiyos</flux:select.option>
@@ -407,6 +416,7 @@ new class extends Component {
                         label="Lugar ng Trabaho / Business Address" placeholder="Company/school address" />
                 </div>
 
+                @if (! $is_representative)
                 <flux:select wire:model="personal.course_id" label="Course *">
                     <flux:select.option value="">Select course...</flux:select.option>
                     @foreach ($courseOptions as $courseOption)
@@ -416,6 +426,7 @@ new class extends Component {
                     </flux:select.option>
                     @endforeach
                 </flux:select>
+                @endif
 
                 @if (!$is_representative)
                 <flux:select wire:model="personal.house_heroes" label="House of Heroes *">
@@ -555,7 +566,7 @@ new class extends Component {
                     <flux:button wire:click="nextStep" variant="primary" icon-trailing="chevron-right"
                     class="bg-black! hover:bg-gray-900! border-black!">Next</flux:button>
                     @else
-                    <flux:button wire:click="submit" variant="primary" icon="check" :disabled="!$consent"
+                    <flux:button wire:click="submit" variant="primary" icon="check" x-bind:disabled="! $wire.consent"
                         class="bg-black! hover:bg-gray-900! border-black!">Submit</flux:button>
                     @endif
             </div>

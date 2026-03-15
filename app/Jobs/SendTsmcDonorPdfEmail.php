@@ -13,34 +13,34 @@ use Spatie\LaravelPdf\Facades\Pdf;
 
 class SendTsmcDonorPdfEmail implements ShouldQueue
 {
-    use Queueable;
+  use Queueable;
+  public $timeout = 600;
 
-    public function __construct(
-        public string $donorName,
-        public string $donorEmail,
-        public string $filename,
-        public array $pdfData,
-    ) {
-    }
+  public function __construct(
+    public string $donorName,
+    public string $donorEmail,
+    public string $filename,
+    public array $pdfData,
+  ) {}
 
-    public function handle(): void
-    {
-        $pdfSubpath = 'tsmc/' . $this->filename;
-        $pdfAbsolutePath = Storage::disk('local')->path('private/pdfs/' . $pdfSubpath);
+  public function handle(): void
+  {
+    $pdfSubpath = 'tsmc/' . $this->filename;
+    $pdfAbsolutePath = Storage::disk('local')->path('private/pdfs/' . $pdfSubpath);
 
-        File::ensureDirectoryExists(Storage::disk('local')->path('private/pdfs/tsmc'));
+    File::ensureDirectoryExists(Storage::disk('local')->path('private/pdfs/tsmc'));
 
-        Pdf::view('pdf.tsmcs-pdf', [
-            'data' => $this->pdfData['personal'],
-            'queue_number' => $this->pdfData['queue_number'] ?? '',
-            'preferred_date' => $this->pdfData['preferred_date'] ?? '',
-        ])
-            ->margins(4, 10, 4, 10)
-            ->format('a4')
-            ->save($pdfAbsolutePath);
+    Pdf::view('pdf.tsmcs-pdf', [
+      'data' => $this->pdfData['personal'],
+      'queue_number' => $this->pdfData['queue_number'] ?? '',
+      'preferred_date' => $this->pdfData['preferred_date'] ?? '',
+    ])
+      ->margins(4, 10, 4, 10)
+      ->format('a4')
+      ->save($pdfAbsolutePath);
 
-        $downloadUrl = URL::temporarySignedRoute('pdf.landing', now()->addDays(7), ['path' => $pdfSubpath]);
+    $downloadUrl = URL::temporarySignedRoute('pdf.landing', now()->addDays(7), ['path' => $pdfSubpath]);
 
-        Mail::to($this->donorEmail)->send(new FormSubmitted($this->donorName, $downloadUrl));
-    }
+    Mail::to($this->donorEmail)->send(new FormSubmitted($this->donorName, $downloadUrl));
+  }
 }
