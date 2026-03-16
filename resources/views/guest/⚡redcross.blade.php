@@ -18,7 +18,7 @@ new class extends Component {
 
   public bool $is_representative = false;
 
-  public string $preferred_date = '2026-03-20';
+  public string $preferred_date = '2026-03-25';
 
   public array $representative = [
     'first_name' => '',
@@ -93,7 +93,7 @@ new class extends Component {
         'personal.civil_status' => 'nullable|string',
         'personal.nationality' => 'nullable|string',
         'personal.religion' => 'nullable|string',
-        'preferred_date' => 'required|in:2026-03-13,2026-03-20',
+        'preferred_date' => 'required|in:2026-03-13,2026-03-20,2026-03-25',
         'representative.first_name' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
         'representative.surname' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
         'representative.student_employee_id' => [Rule::requiredIf(fn() => $this->is_representative), 'nullable', 'string'],
