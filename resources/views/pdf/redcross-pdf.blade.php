@@ -14,7 +14,7 @@
 
         <div class="absolute left-0 top-0 text-xs leading-snug">
             {{-- <p class="font-semibold">Queue No: {{ $queue_number ?? '' }} | NCST Blood Donation</p> --}}
-            <p>NCST, {{ $preferred_date ? \Carbon\Carbon::parse($preferred_date)->format('F j, Y') : '' }}, 8:00 AM</p>
+            <p>NCST, {{ ($preferred_date ?? null) ? \Carbon\Carbon::parse($preferred_date)->format('F j, Y') : '' }}, 8:00 AM</p>
         </div>
 
         <div class="flex flex-col items-center justify-center">
@@ -670,6 +670,321 @@
         </div>
     </div>
     @pageBreak
+
+    <div class="max-w-5xl mx-auto p-4 bg-white text-black font-sans text-xs">
+        <div class="mb-2 font-bold">III. DONOR’S DECLARATION</div>
+        <ul class="list-none space-y-1 text-justify mb-4 ml-2">
+            <li class="flex items-start">
+                <span class="mr-2">➤</span>
+                <span>I certify that I am the person referred to above and that all the entries are read and well understood by me and to the best of my knowledge, truthfully answered all the questions in this Blood Donor Interview Sheet.</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">➤</span>
+                <span>I understand that all questions are pertinent for my safety and for the benefit of the patient who will undergo blood transfusion.</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">➤</span>
+                <span>I am voluntarily giving my blood through the Philippine Red Cross, without remuneration, for the use of persons in need of this vital fluid without regard to rank, race, color, creed, religion, or political persuasion.</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">➤</span>
+                <span>I understand that my blood will be screened for Malaria, Syphilis, Hepatitis B, Hepatitis C and HIV. I am aware that the screening tests are not diagnostic and may yield false positive results. Should any of the screening tests give a reactive result, I authorize the Red Cross to inform me utilizing the information I have supplied, subject the results to confirmatory tests, offer counselling and to dispose of my donated blood in any way it may deem advisable for the safety of the majority of the populace.</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">➤</span>
+                <span>I confirm that I am over the age of 18 years.</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">➤</span>
+                <span>I understand that all information hereinto is treated confidential in compliance with the Data Privacy Act of 2012. I therefore authorize the Philippine Red Cross to utilize the information I supplied for purposes of research or studies for the benefit and safety of the community.</span>
+            </li>
+        </ul>
+
+        <div class="grid grid-cols-2 gap-8 mb-4">
+            <div class="border border-black">
+                 <div class="text-center font-bold border-b border-black text-[10px]">For those ages 16-17</div>
+                 <div class="flex text-center pt-8 pb-1">
+                     <div class="w-1/2 border-r border-black px-1 flex flex-col justify-end">
+                         <div class="border-b border-black mb-1"></div>
+                         <span class="text-[9px]">Signature of Parent or Guardian</span>
+                     </div>
+                     <div class="w-1/2 px-1 flex flex-col justify-end">
+                         <div class="border-b border-black mb-1"></div>
+                         <span class="text-[9px]">Relationship to Blood Donor</span>
+                     </div>
+                 </div>
+            </div>
+            <div class="flex items-end justify-between space-x-4 pb-1">
+                <div class="text-center w-1/2 flex flex-col justify-end">
+                    <div class="border-b border-black mb-1"></div>
+                    <span class="text-[10px]">Donor's Signature</span>
+                </div>
+                <div class="text-center w-1/2 flex flex-col justify-end">
+                    <div class="border-b border-black mb-1"></div>
+                    <span class="text-[10px]">Donor's Thumbmark</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-2 font-bold">IV. INITIAL SCREENING (To be filled up by the interviewer)</div>
+
+        <table class="w-full border-collapse border border-black text-center text-[10px] mb-2">
+            <thead>
+                <tr>
+                    <th colspan="4" class="border border-black"></th>
+                    <th colspan="3" class="border border-black font-bold text-xs bg-gray-100">FOR APHERESIS DONOR</th>
+                    <th class="border border-black"></th>
+                </tr>
+                <tr>
+                    <th class="border border-black w-[12%] px-1 py-1">BODY WT</th>
+                    <th class="border border-black w-[12%] px-1 py-1">SP. GR</th>
+                    <th class="border border-black w-[12%] px-1 py-1">HGB</th>
+                    <th class="border border-black w-[12%] px-1 py-1">HCT</th>
+                    <th class="border border-black w-[12%] px-1 py-1">RBC</th>
+                    <th class="border border-black w-[12%] px-1 py-1">WBC</th>
+                    <th class="border border-black w-[12%] px-1 py-1">PLT count</th>
+                    <th class="border border-black w-[16%] px-1 py-1 bg-gray-50 font-bold">BLOOD TYPE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="h-8">
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="flex text-[10px] mb-4">
+            <div class="w-1/2 pr-4">
+                 <div class="flex items-center mb-1"><span class="font-bold w-32">TYPE OF DONATION:</span> <span class="w-40 font-bold">IN-HOUSE:</span> <span class="ml-auto">( )</span></div>
+                 <div class="flex items-center mb-1"><span class="w-32"></span> <span class="w-40 font-bold">WALK- IN/VOLUNTARY:</span> <span class="ml-auto">( )</span></div>
+                 <div class="flex items-center mb-1"><span class="w-32"></span> <span class="w-40 font-bold">REPLACEMENT:</span> <span class="ml-auto">( )</span></div>
+                 <div class="flex items-center mb-1"><span class="w-32"></span> <span class="w-40 font-bold">PATIENT-DIRECTED:</span> <span class="ml-auto">( )</span></div>
+            </div>
+            <div class="w-1/2 pl-4">
+                 <div class="flex justify-between items-center mb-1"><span class="font-bold">Mobile Blood Donation</span> <span>( )</span></div>
+                 <div class="flex items-end mb-1">
+                     <span class="mr-1 font-bold w-20 text-right">PLACE:</span>
+                     <div class="border-b border-black flex-grow"></div>
+                 </div>
+                 <div class="flex items-end mb-1">
+                     <span class="mr-1 font-bold w-20 text-right">ORGANIZER:</span>
+                     <div class="border-b border-black flex-grow"></div>
+                 </div>
+            </div>
+        </div>
+
+        <div class="border border-black grid grid-cols-12 text-center text-[10px] mb-4">
+            <div class="col-span-5 border-r border-black h-8"></div>
+            <div class="col-span-3 border-r border-black h-8"></div>
+            <div class="col-span-1 border-r border-black h-8"></div>
+            <div class="col-span-2 border-r border-black h-8"></div>
+            <div class="col-span-1 h-8"></div>
+
+            <div class="col-span-5 border-t border-black py-1 font-bold">Patient Name</div>
+            <div class="col-span-3 border-t border-black py-1 font-bold">Hospital</div>
+            <div class="col-span-1 border-t border-black py-1 font-bold">Blood Type</div>
+            <div class="col-span-2 border-t border-black py-1 font-bold">WB/Component</div>
+            <div class="col-span-1 border-t border-black py-1 font-bold">No. of units</div>
+        </div>
+
+        <div class="flex items-center text-[11px] font-bold mb-2">
+            <span class="mr-6">History of previous donation?</span>
+            <span class="mr-6">( ) YES</span>
+            <span>( ) NO</span>
+        </div>
+
+        <table class="w-full border-collapse border border-black text-[10px] mb-4">
+            <thead>
+                <tr>
+                    <th class="border border-black w-1/3 p-1"></th>
+                    <th class="border border-black w-1/3 p-1">Red Cross</th>
+                    <th class="border border-black w-1/3 p-1">Hospital</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border border-black px-1 py-1">No. of times</td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black px-1 py-1">Date of last donation</td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black px-1 py-1">Place of last donation</td>
+                    <td class="border border-black"></td>
+                    <td class="border border-black"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="flex items-end justify-between mb-4 text-[10px]">
+            <div class="w-1/3 text-center">
+                <div class="border-b border-black mb-1"></div>
+                <div class="font-bold italic">INTERVIEWER (print name & sign)</div>
+            </div>
+            <div class="w-1/3 text-center px-4">
+                <div class="border-b border-black mb-1"></div>
+                <div>PRC Office</div>
+            </div>
+            <div class="w-1/3 text-center">
+                <div class="border-b border-black mb-1"></div>
+                <div>Date</div>
+            </div>
+        </div>
+
+        <div class="font-bold mb-1 border-t-2 border-black pt-2">V. PHYSICAL EXAMINATION (To be accomplished by the Blood Bank Physician)</div>
+
+        <table class="w-full border-collapse border-b border-black text-center text-[10px] mb-4">
+            <thead>
+                <tr class="h-8">
+                    <td class="border border-black w-[14%]"></td>
+                    <td class="border border-black w-[14%]"></td>
+                    <td class="border border-black w-[14%]"></td>
+                    <td class="border border-black w-[14%]"></td>
+                    <td class="border border-black w-[14%]"></td>
+                    <td class="border border-black w-[14%]"></td>
+                    <td class="border border-black w-[16%]"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="px-1 py-1">Blood Pressure</td>
+                    <td class="px-1 py-1">Pulse Rate</td>
+                    <td class="px-1 py-1">Body Temp.</td>
+                    <td class="px-1 py-1">Gen. Appearance</td>
+                    <td class="px-1 py-1">Skin</td>
+                    <td class="px-1 py-1">HEENT</td>
+                    <td class="px-1 py-1">Heart and Lungs</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="flex text-[10px] mb-4">
+            <div class="w-1/2">
+                <div class="font-bold mb-1">REMARKS:</div>
+                <div class="flex items-center mb-1"><span class="w-6 font-bold">( )</span> <span>Accepted</span></div>
+                <div class="flex items-center mb-1">
+                    <span class="w-6 font-bold">( )</span>
+                    <span class="w-32">Temporarily Deferred</span>
+                    <span class="mr-1">Reason:</span>
+                    <div class="border-b border-black flex-grow"></div>
+                </div>
+                <div class="flex items-center mb-1">
+                    <span class="w-6 font-bold">( )</span>
+                    <span class="w-32">Permanently Deferred</span>
+                    <span class="mr-1">Reason:</span>
+                    <div class="border-b border-black flex-grow"></div>
+                </div>
+                <div class="flex items-center mb-1">
+                    <span class="w-6 font-bold">( )</span>
+                    <span class="w-32">Refused</span>
+                    <span class="mr-1">Reason:</span>
+                    <div class="border-b border-black flex-grow"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end mb-6 text-[10px]">
+             <div class="flex items-center">
+                <span class="font-bold mr-2">Blood bag to be used: (mark [V] appropriate box):</span>
+                <span class="w-3 h-3 border border-black inline-block mr-1"></span> <span class="mr-2">Single</span>
+                <span class="w-3 h-3 border border-black inline-block mr-1"></span> <span class="mr-2">Double</span>
+                <span class="w-3 h-3 border border-black inline-block mr-1"></span> <span class="mr-2">Triple</span>
+                <span class="w-3 h-3 border border-black inline-block mr-1"></span> <span class="mr-2">Quadruple</span>
+                <span class="w-3 h-3 border border-black inline-block mr-1"></span> <span class="mr-2">Top & Bottom</span>
+                <span class="w-3 h-3 border border-black inline-block mr-1"></span> <span>Apheresis</span>
+             </div>
+
+             <div class="text-center w-64">
+                <div class="border-b border-black mb-1"></div>
+                <div class="font-bold">BSF PHYSICIAN (print name & sign)</div>
+             </div>
+        </div>
+
+        <div class="font-bold mb-1">VI. BLOOD COLLECTION (To be accomplished by the phlebotomist)</div>
+
+        <div class="text-[10px] mb-2 font-bold">Blood Bag Used:</div>
+
+        <div class="border border-black text-[10px] mb-4">
+            <table class="w-full text-center border-collapse">
+                 <thead>
+                     <tr>
+                         <th colspan="4" class="border-b border-r border-black py-1">KARMI</th>
+                         <th colspan="2" class="border-b border-r border-black py-1">SPECIAL BAG</th>
+                         <th colspan="3" class="border-b border-black py-1">APHERESIS</th>
+                     </tr>
+                     <tr>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">Single</th>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">Double</th>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">Triple</th>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">Quadruple</th>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">FK T&B</th>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">TRM T&B</th>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">Amicore</th>
+                         <th class="border-r border-black font-normal py-1 w-[11%]">Haemonetics</th>
+                         <th class="font-normal py-1 w-[12%]">Trima</th>
+                     </tr>
+                 </thead>
+            </table>
+        </div>
+
+        <div class="flex text-[10px] mb-2">
+            <div class="w-1/2 pr-2">
+                 <div class="flex items-end mb-1">
+                     <span class="mr-1 font-bold">Amount of Blood Taken:</span>
+                     <div class="border-b border-black w-24 mx-1"></div>
+                     <span class="font-bold">ml.</span>
+                 </div>
+                 <div class="flex items-end mb-1">
+                     <span class="mr-1 font-bold">Donor Reaction:</span>
+                     <div class="border-b border-black flex-grow"></div>
+                 </div>
+                 <div class="flex items-end mb-1">
+                     <span class="mr-1 font-bold">Management Done:</span>
+                     <div class="border-b border-black flex-grow"></div>
+                 </div>
+            </div>
+            <div class="w-1/2 pl-2">
+                 <div class="flex items-center mb-1">
+                     <span class="mr-4 font-bold">Successful:</span>
+                     <span class="mr-2 font-bold">YES _______</span>
+                     <span class="font-bold">NO _______</span>
+                 </div>
+                 <div class="flex items-end mb-1">
+                     <span class="mr-1 font-bold">Start Time:</span>
+                     <div class="border-b border-black w-24 mr-4"></div>
+                     <span class="mr-1 font-bold">End Time:</span>
+                     <div class="border-b border-black w-24"></div>
+                 </div>
+            </div>
+        </div>
+
+        <div class="flex items-end justify-between mt-8 relative">
+            <div class="border-2 border-black py-3 px-8 text-center font-bold text-sm">
+                BBIS DONATION ID
+            </div>
+
+            <div class="text-center w-64 absolute right-0 bottom-4">
+                 <div class="border-b border-black mb-1"></div>
+                 <div class="font-bold text-[10px]">PHLEBOTOMIST (print name & sign)</div>
+            </div>
+        </div>
+
+        <div class="text-right text-[8px] mt-8 font-bold">
+            PRC-NBS DONOR FORM 321-E Revised Sep2025
+        </div>
+
+    </div>
 </body>
 
 </html>
